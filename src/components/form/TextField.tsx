@@ -1,0 +1,30 @@
+import { useFieldContext } from "@/hooks/formContext";
+import type { ComponentProps } from "react";
+import { Input } from "../ui/Input";
+import { Label } from "../ui/Label";
+
+interface TextFieldProps extends ComponentProps<"input"> {
+	label: string;
+}
+
+export function TextField({ label, ...props }: TextFieldProps) {
+	const field = useFieldContext<string>();
+
+	return (
+		<div className="grid gap-2">
+			<Label htmlFor="name">{label}</Label>
+			<Input
+				id={field.name}
+				name={field.name}
+				onChange={(e) => field.handleChange(e.target.value)}
+				onBlur={field.handleBlur}
+				{...props}
+			/>
+			{!field.state.meta.isValid && (
+				<span className="text-destructive text-sm">
+					{field.state.meta.errors.map((e) => e.message).join(", ")}
+				</span>
+			)}
+		</div>
+	);
+}
