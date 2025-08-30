@@ -1,14 +1,15 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: async ({ context }) => {
 		if (!context.user) {
 			throw redirect({ to: "/login" });
 		}
+		throw redirect({ to: "/media" });
 	},
 	component: App,
 });
 
 function App() {
-	return <div className="text-center">Media Voyage</div>;
+	return <Outlet />;
 }

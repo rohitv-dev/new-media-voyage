@@ -10,8 +10,8 @@ import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 
 import appCss from "../styles.css?url";
 
+import { Navbar } from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { authQueryOptions } from "@/lib/auth/queries";
 import type { QueryClient } from "@tanstack/react-query";
 
@@ -21,8 +21,6 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	beforeLoad: async ({ context }) => {
-		// we're using react-query for client-side caching to reduce client-to-server calls, see /src/router.tsx
-		// better-auth's cookieCache is also enabled server-side to reduce server-to-db calls, see /src/lib/auth/auth.ts
 		const user = await context.queryClient.ensureQueryData({
 			...authQueryOptions(),
 			revalidateIfStale: true,
@@ -55,14 +53,14 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<HeadContent />
 			</head>
 			<body>
 				<ThemeProvider>
-					<ThemeToggle />
-					{children}
+					<Navbar />
+					<div className="container mx-auto px-4 mt-8">{children}</div>
 				</ThemeProvider>
 				<TanstackDevtools
 					config={{

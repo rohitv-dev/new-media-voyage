@@ -8,7 +8,7 @@
 	"files": {
 		"ignoreUnknown": false,
 		"ignore": ["src/routeTree.gen.ts"],
-		"include": ["src/*", ".vscode/*", "index.html", "vite.config.js"]
+		"include": ["src/**/*", ".vscode/*", "index.html", "vite.config.js"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -23,6 +23,10 @@
 			"recommended": true,
 			"correctness": {
 				"noChildrenProp": "off"
+			},
+			"style": {
+				"noNonNullAssertion": "off",
+				"noDefaultExport": "error"
 			}
 		}
 	},

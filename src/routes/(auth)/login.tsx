@@ -1,111 +1,119 @@
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
+import { useAppForm } from "@/hooks/form";
 import { authClient } from "@/lib/auth/auth-client";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { GalleryVerticalEnd, LoaderCircle } from "lucide-react";
+import { GalleryVerticalEnd } from "lucide-react";
 import { useState } from "react";
+import z from "zod/v4";
 
 export const Route = createFileRoute("/(auth)/login")({
 	component: LoginForm,
 });
 
+const loginSchema = z
+	.object({
+		email: z.email(),
+		username: z.string(),
+		password: z
+			.string()
+			.min(6, "Password must be at least six characters long"),
+	})
+	.refine((val) => val.email || val.username, {
+		message: "Either email or username is required",
+	});
+
 function LoginForm() {
 	const { redirectUrl } = Route.useRouteContext();
 
-	const [isLoading, setIsLoading] = useState(false);
-	const [errorMessage, setErrorMessage] = useState("");
-
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		if (isLoading) return;
-
-		const formData = new FormData(e.currentTarget);
-		const email = formData.get("email") as string;
-		const password = formData.get("password") as string;
-		if (!email || !password) return;
-
-		setIsLoading(true);
-		setErrorMessage("");
-
-		authClient.signIn.email(
-			{
-				email,
-				password,
-				callbackURL: redirectUrl,
-			},
-			{
-				onError: (ctx) => {
-					console.log(ctx.error);
-					setErrorMessage(ctx.error.message);
-					setIsLoading(false);
+	const form = useAppForm({
+		defaultValues: {
+			email: "",
+			username: "",
+			password: "",
+		},
+		validators: {
+			onSubmit: loginSchema,
+		},
+		onSubmit: ({ value }) => {
+			authClient.signIn.email(
+				{
+					email: value.email || value.username,
+					password: value.password,
+					callbackURL: redirectUrl,
 				},
-				// better-auth seems to trigger a hard navigation on login,
-				// so we don't have to revalidate & navigate ourselves
-				// onSuccess: () => {
-				//   queryClient.removeQueries({ queryKey: authQueryOptions().queryKey });
-				//   navigate({ to: redirectUrl });
-				// },
-			},
-		);
-	};
+				{
+					onError: (ctx) => {
+						console.log(ctx.error);
+						setErrorMessage(ctx.error.message);
+					},
+				},
+			);
+		},
+	});
+
+	const [errorMessage, setErrorMessage] = useState("");
 
 	return (
 		<div className="flex flex-col gap-6">
-			<form onSubmit={handleSubmit}>
-				<div className="flex flex-col gap-6">
-					<div className="flex flex-col items-center gap-2">
-						<div className="flex h-8 w-8 items-center justify-center rounded-md">
-							<GalleryVerticalEnd className="size-6" />
+			<form.AppForm>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						form.handleSubmit();
+					}}
+				>
+					<div className="flex flex-col gap-6">
+						<div className="flex flex-col items-center gap-2">
+							<div className="flex h-8 w-8 items-center justify-center rounded-md">
+								<GalleryVerticalEnd className="size-6" />
+							</div>
+							<span className="sr-only">Media Voyage</span>
+							<h1 className="text-xl font-bold">
+								Welcome back to Media Voyage
+							</h1>
 						</div>
-						<span className="sr-only">Acme Inc.</span>
-						<h1 className="text-xl font-bold">Welcome back to Acme Inc.</h1>
-					</div>
-					<div className="flex flex-col gap-5">
-						<div className="grid gap-2">
-							<Label htmlFor="email">Email</Label>
-							<Input
-								id="email"
+						<div>
+							<form.AppField
 								name="email"
-								type="email"
-								placeholder="hello@example.com"
-								readOnly={isLoading}
-								required
+								children={({ TextField }) => (
+									<TextField label="Email" placeholder="hello@example.com" />
+								)}
+							/>
+							<div className="text-center text-sm text-muted-foreground pt-2">
+								(or)
+							</div>
+							<form.AppField
+								name="username"
+								children={({ TextField }) => (
+									<TextField label="Username" placeholder="Username" />
+								)}
 							/>
 						</div>
-						<div className="grid gap-2">
-							<Label htmlFor="password">Password</Label>
-							<Input
-								id="password"
-								name="password"
-								type="password"
-								placeholder="Enter password here"
-								readOnly={isLoading}
-								required
-							/>
+						<form.AppField
+							name="password"
+							children={({ TextField }) => (
+								<TextField
+									type="password"
+									label="Password"
+									placeholder="Enter password here"
+								/>
+							)}
+						/>
+						<div className="flex flex-col gap-5">
+							<form.SubmitButton text="Login" />
 						</div>
-						<Button
-							type="submit"
-							className="mt-2 w-full"
-							size="lg"
-							disabled={isLoading}
-						>
-							{isLoading && <LoaderCircle className="animate-spin" />}
-							{isLoading ? "Logging in..." : "Login"}
-						</Button>
+						{errorMessage && (
+							<span className="text-destructive text-center text-sm">
+								{errorMessage}
+							</span>
+						)}
+						<div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+							<span className="bg-background text-muted-foreground relative z-10 px-2">
+								Or
+							</span>
+						</div>
 					</div>
-					{errorMessage && (
-						<span className="text-destructive text-center text-sm">
-							{errorMessage}
-						</span>
-					)}
-					<div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-						<span className="bg-background text-muted-foreground relative z-10 px-2">
-							Or
-						</span>
-					</div>
-				</div>
-			</form>
+				</form>
+			</form.AppForm>
 
 			<div className="text-center text-sm">
 				Don&apos;t have an account?{" "}

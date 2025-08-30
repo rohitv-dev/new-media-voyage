@@ -15,8 +15,10 @@ import { Route as MediaRouteRouteImport } from './routes/media/route'
 import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MediaIndexRouteImport } from './routes/media/index'
+import { Route as MediaAddRouteImport } from './routes/media/add'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as MediaUpdateIdRouteImport } from './routes/media/update.$id'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
 const rootServerRouteImport = createServerRootRoute()
@@ -40,6 +42,11 @@ const MediaIndexRoute = MediaIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MediaRouteRoute,
 } as any)
+const MediaAddRoute = MediaAddRouteImport.update({
+  id: '/add',
+  path: '/add',
+  getParentRoute: () => MediaRouteRoute,
+} as any)
 const authSignupRoute = authSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -49,6 +56,11 @@ const authLoginRoute = authLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => authRouteRoute,
+} as any)
+const MediaUpdateIdRoute = MediaUpdateIdRouteImport.update({
+  id: '/update/$id',
+  path: '/update/$id',
+  getParentRoute: () => MediaRouteRoute,
 } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
   id: '/api/auth/$',
@@ -61,13 +73,17 @@ export interface FileRoutesByFullPath {
   '/media': typeof MediaRouteRouteWithChildren
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
+  '/media/add': typeof MediaAddRoute
   '/media/': typeof MediaIndexRoute
+  '/media/update/$id': typeof MediaUpdateIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof authRouteRouteWithChildren
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
+  '/media/add': typeof MediaAddRoute
   '/media': typeof MediaIndexRoute
+  '/media/update/$id': typeof MediaUpdateIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -76,13 +92,22 @@ export interface FileRoutesById {
   '/media': typeof MediaRouteRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/signup': typeof authSignupRoute
+  '/media/add': typeof MediaAddRoute
   '/media/': typeof MediaIndexRoute
+  '/media/update/$id': typeof MediaUpdateIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/media' | '/login' | '/signup' | '/media/'
+  fullPaths:
+    | '/'
+    | '/media'
+    | '/login'
+    | '/signup'
+    | '/media/add'
+    | '/media/'
+    | '/media/update/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/media'
+  to: '/' | '/login' | '/signup' | '/media/add' | '/media' | '/media/update/$id'
   id:
     | '__root__'
     | '/'
@@ -90,7 +115,9 @@ export interface FileRouteTypes {
     | '/media'
     | '/(auth)/login'
     | '/(auth)/signup'
+    | '/media/add'
     | '/media/'
+    | '/media/update/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -150,6 +177,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MediaIndexRouteImport
       parentRoute: typeof MediaRouteRoute
     }
+    '/media/add': {
+      id: '/media/add'
+      path: '/add'
+      fullPath: '/media/add'
+      preLoaderRoute: typeof MediaAddRouteImport
+      parentRoute: typeof MediaRouteRoute
+    }
     '/(auth)/signup': {
       id: '/(auth)/signup'
       path: '/signup'
@@ -163,6 +197,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof authRouteRoute
+    }
+    '/media/update/$id': {
+      id: '/media/update/$id'
+      path: '/update/$id'
+      fullPath: '/media/update/$id'
+      preLoaderRoute: typeof MediaUpdateIdRouteImport
+      parentRoute: typeof MediaRouteRoute
     }
   }
 }
@@ -193,11 +234,15 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
 )
 
 interface MediaRouteRouteChildren {
+  MediaAddRoute: typeof MediaAddRoute
   MediaIndexRoute: typeof MediaIndexRoute
+  MediaUpdateIdRoute: typeof MediaUpdateIdRoute
 }
 
 const MediaRouteRouteChildren: MediaRouteRouteChildren = {
+  MediaAddRoute: MediaAddRoute,
   MediaIndexRoute: MediaIndexRoute,
+  MediaUpdateIdRoute: MediaUpdateIdRoute,
 }
 
 const MediaRouteRouteWithChildren = MediaRouteRoute._addFileChildren(

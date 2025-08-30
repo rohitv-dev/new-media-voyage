@@ -1,15 +1,25 @@
-import { fetchMedia } from "@/services/mediaService";
+import { MediaTable } from "@/features/media/components/MediaTable";
+import { fetchMediaQueryOptions } from "@/features/media/queries/mediaQueries";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/media/")({
-	loader: () => fetchMedia(),
+	loader: ({ context }) => {
+		context.queryClient.ensureQueryData(
+			fetchMediaQueryOptions(context.user!.id),
+		);
+	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const media = Route.useLoaderData();
+	const { user } = Route.useRouteContext();
 
-	console.log(media);
+	const { data } = useSuspenseQuery(fetchMediaQueryOptions(user!.id));
 
-	return <div>Hello "/media/"!</div>;
+	return (
+		<div>
+			<MediaTable data={data ?? []} />
+		</div>
+	);
 }

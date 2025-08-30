@@ -10,7 +10,7 @@ export function SubmitButton({ text }: { text: string }) {
 			{(isSubmitting) => (
 				<Button
 					type="submit"
-					className="mt-2 w-full"
+					className="mt-2 w-full cursor-pointer"
 					size="lg"
 					disabled={isSubmitting}
 				>

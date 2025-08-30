@@ -86,16 +86,17 @@ function SignupForm() {
 						</div>
 						<div className="flex flex-col gap-5">
 							<form.AppField
-								name="name"
-								children={({ TextField }) => {
-									return <TextField label="Name" placeholder="John Doe" />;
-								}}
-							/>
-							<form.AppField
 								name="username"
 								children={({ TextField }) => (
 									<TextField label="Username" placeholder="Username" />
 								)}
+							/>
+
+							<form.AppField
+								name="name"
+								children={({ TextField }) => {
+									return <TextField label="Name" placeholder="John Doe" />;
+								}}
 							/>
 							<form.AppField
 								name="email"
