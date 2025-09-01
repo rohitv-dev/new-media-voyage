@@ -1,9 +1,13 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouteContext } from "@tanstack/react-router";
+import { UserRoundIcon } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/Button";
 
 export function Navbar() {
 	const navigate = useNavigate();
+	const { user } = useRouteContext({ strict: false });
+
+	if (!user) return null;
 
 	return (
 		<nav className="w-full px-4 py-2 border-b shadow-sm">
@@ -22,6 +26,13 @@ export function Navbar() {
 						Add
 					</Button>
 					<ThemeToggle />
+					<Button
+						variant="outline"
+						onClick={() => navigate({ to: "/profile" })}
+					>
+						<UserRoundIcon />
+						{user.name}
+					</Button>
 				</div>
 			</div>
 		</nav>

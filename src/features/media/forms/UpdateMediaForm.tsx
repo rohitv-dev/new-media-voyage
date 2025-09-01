@@ -57,7 +57,7 @@ export function UpdateMediaForm({ data }: UpdateMediaFormProps) {
 		<div>
 			<form.AppForm>
 				<div className="flex justify-between items-center">
-					<div className="font-bold text-xl mb-4">Add Media</div>
+					<div className="font-bold text-xl mb-4">Update Media</div>
 					<form.AppField
 						name="isPrivate"
 						children={({ SwitchField }) => <SwitchField label="Private?" />}
@@ -169,6 +169,12 @@ export function UpdateMediaForm({ data }: UpdateMediaFormProps) {
 						<form.AppField
 							name="comments"
 							children={({ TiptapField }) => <TiptapField label="Comments" />}
+						/>
+					</div>
+					<div className="col-span-2 mx-auto">
+						<form.AppField
+							name="rating"
+							children={({ RatingField }) => <RatingField size={32} />}
 						/>
 					</div>
 					<div className="col-span-2">

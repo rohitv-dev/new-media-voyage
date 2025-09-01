@@ -12,13 +12,16 @@ import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MediaRouteRouteImport } from './routes/media/route'
+import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
 import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MediaIndexRouteImport } from './routes/media/index'
 import { Route as MediaAddRouteImport } from './routes/media/add'
+import { Route as ProtectedProfileRouteImport } from './routes/_protected/profile'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as MediaUpdateIdRouteImport } from './routes/media/update.$id'
+import { Route as MediaFriendNameMediaRouteImport } from './routes/media/$friendName.media'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
 const rootServerRouteImport = createServerRootRoute()
@@ -26,6 +29,10 @@ const rootServerRouteImport = createServerRootRoute()
 const MediaRouteRoute = MediaRouteRouteImport.update({
   id: '/media',
   path: '/media',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
+  id: '/_protected',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authRouteRoute = authRouteRouteImport.update({
@@ -47,6 +54,11 @@ const MediaAddRoute = MediaAddRouteImport.update({
   path: '/add',
   getParentRoute: () => MediaRouteRoute,
 } as any)
+const ProtectedProfileRoute = ProtectedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => ProtectedRouteRoute,
+} as any)
 const authSignupRoute = authSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -62,6 +74,11 @@ const MediaUpdateIdRoute = MediaUpdateIdRouteImport.update({
   path: '/update/$id',
   getParentRoute: () => MediaRouteRoute,
 } as any)
+const MediaFriendNameMediaRoute = MediaFriendNameMediaRouteImport.update({
+  id: '/$friendName/media',
+  path: '/$friendName/media',
+  getParentRoute: () => MediaRouteRoute,
+} as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -73,27 +90,34 @@ export interface FileRoutesByFullPath {
   '/media': typeof MediaRouteRouteWithChildren
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
+  '/profile': typeof ProtectedProfileRoute
   '/media/add': typeof MediaAddRoute
   '/media/': typeof MediaIndexRoute
+  '/media/$friendName/media': typeof MediaFriendNameMediaRoute
   '/media/update/$id': typeof MediaUpdateIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof authRouteRouteWithChildren
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
+  '/profile': typeof ProtectedProfileRoute
   '/media/add': typeof MediaAddRoute
   '/media': typeof MediaIndexRoute
+  '/media/$friendName/media': typeof MediaFriendNameMediaRoute
   '/media/update/$id': typeof MediaUpdateIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/(auth)': typeof authRouteRouteWithChildren
+  '/_protected': typeof ProtectedRouteRouteWithChildren
   '/media': typeof MediaRouteRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/signup': typeof authSignupRoute
+  '/_protected/profile': typeof ProtectedProfileRoute
   '/media/add': typeof MediaAddRoute
   '/media/': typeof MediaIndexRoute
+  '/media/$friendName/media': typeof MediaFriendNameMediaRoute
   '/media/update/$id': typeof MediaUpdateIdRoute
 }
 export interface FileRouteTypes {
@@ -103,26 +127,40 @@ export interface FileRouteTypes {
     | '/media'
     | '/login'
     | '/signup'
+    | '/profile'
     | '/media/add'
     | '/media/'
+    | '/media/$friendName/media'
     | '/media/update/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/media/add' | '/media' | '/media/update/$id'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/profile'
+    | '/media/add'
+    | '/media'
+    | '/media/$friendName/media'
+    | '/media/update/$id'
   id:
     | '__root__'
     | '/'
     | '/(auth)'
+    | '/_protected'
     | '/media'
     | '/(auth)/login'
     | '/(auth)/signup'
+    | '/_protected/profile'
     | '/media/add'
     | '/media/'
+    | '/media/$friendName/media'
     | '/media/update/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   authRouteRoute: typeof authRouteRouteWithChildren
+  ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
   MediaRouteRoute: typeof MediaRouteRouteWithChildren
 }
 export interface FileServerRoutesByFullPath {
@@ -156,6 +194,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MediaRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_protected': {
+      id: '/_protected'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ProtectedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(auth)': {
       id: '/(auth)'
       path: '/'
@@ -184,6 +229,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MediaAddRouteImport
       parentRoute: typeof MediaRouteRoute
     }
+    '/_protected/profile': {
+      id: '/_protected/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProtectedProfileRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
     '/(auth)/signup': {
       id: '/(auth)/signup'
       path: '/signup'
@@ -203,6 +255,13 @@ declare module '@tanstack/react-router' {
       path: '/update/$id'
       fullPath: '/media/update/$id'
       preLoaderRoute: typeof MediaUpdateIdRouteImport
+      parentRoute: typeof MediaRouteRoute
+    }
+    '/media/$friendName/media': {
+      id: '/media/$friendName/media'
+      path: '/$friendName/media'
+      fullPath: '/media/$friendName/media'
+      preLoaderRoute: typeof MediaFriendNameMediaRouteImport
       parentRoute: typeof MediaRouteRoute
     }
   }
@@ -233,15 +292,29 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
   authRouteRouteChildren,
 )
 
+interface ProtectedRouteRouteChildren {
+  ProtectedProfileRoute: typeof ProtectedProfileRoute
+}
+
+const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
+  ProtectedProfileRoute: ProtectedProfileRoute,
+}
+
+const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(
+  ProtectedRouteRouteChildren,
+)
+
 interface MediaRouteRouteChildren {
   MediaAddRoute: typeof MediaAddRoute
   MediaIndexRoute: typeof MediaIndexRoute
+  MediaFriendNameMediaRoute: typeof MediaFriendNameMediaRoute
   MediaUpdateIdRoute: typeof MediaUpdateIdRoute
 }
 
 const MediaRouteRouteChildren: MediaRouteRouteChildren = {
   MediaAddRoute: MediaAddRoute,
   MediaIndexRoute: MediaIndexRoute,
+  MediaFriendNameMediaRoute: MediaFriendNameMediaRoute,
   MediaUpdateIdRoute: MediaUpdateIdRoute,
 }
 
@@ -252,6 +325,7 @@ const MediaRouteRouteWithChildren = MediaRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   authRouteRoute: authRouteRouteWithChildren,
+  ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
   MediaRouteRoute: MediaRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport

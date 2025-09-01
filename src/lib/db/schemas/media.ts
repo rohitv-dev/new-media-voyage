@@ -1,6 +1,7 @@
 import {
 	boolean,
 	integer,
+	numeric,
 	pgTable,
 	text,
 	timestamp,
@@ -26,7 +27,7 @@ export const mediaTable = pgTable("media", {
 		.references(() => mediaTypeTable.type)
 		.notNull(),
 	genre: text(),
-	rating: integer(),
+	rating: numeric({ mode: "number" }).default(0),
 	startDate: timestamp({ mode: "date" }),
 	completedDate: timestamp({ mode: "date" }),
 	recommended: boolean(),

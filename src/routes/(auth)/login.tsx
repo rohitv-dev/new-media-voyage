@@ -11,14 +11,15 @@ export const Route = createFileRoute("/(auth)/login")({
 
 const loginSchema = z
 	.object({
-		email: z.email(),
-		username: z.string(),
+		email: z.email().or(z.literal("")),
+		username: z.string().or(z.literal("")),
 		password: z
 			.string()
 			.min(6, "Password must be at least six characters long"),
 	})
 	.refine((val) => val.email || val.username, {
 		message: "Either email or username is required",
+		path: ["email"],
 	});
 
 function LoginForm() {
@@ -34,21 +35,39 @@ function LoginForm() {
 			onSubmit: loginSchema,
 		},
 		onSubmit: ({ value }) => {
-			authClient.signIn.email(
-				{
-					email: value.email || value.username,
-					password: value.password,
-					callbackURL: redirectUrl,
-				},
-				{
-					onError: (ctx) => {
-						console.log(ctx.error);
-						setErrorMessage(ctx.error.message);
+			if (value.email) {
+				authClient.signIn.email(
+					{
+						email: value.email,
+						password: value.password,
+						callbackURL: redirectUrl,
 					},
-				},
-			);
+					{
+						onError: (ctx) => {
+							console.log(ctx.error);
+							setErrorMessage(ctx.error.message);
+						},
+					},
+				);
+			} else if (value.username) {
+				authClient.signIn.username(
+					{
+						username: value.username,
+						password: value.password,
+						callbackURL: redirectUrl,
+					},
+					{
+						onError: (ctx) => {
+							console.log(ctx.error);
+							setErrorMessage(ctx.error.message);
+						},
+					},
+				);
+			}
 		},
 	});
+
+	console.log(loginSchema.safeParse(form.state.values));
 
 	const [errorMessage, setErrorMessage] = useState("");
 
@@ -72,19 +91,37 @@ function LoginForm() {
 							</h1>
 						</div>
 						<div>
-							<form.AppField
-								name="email"
-								children={({ TextField }) => (
-									<TextField label="Email" placeholder="hello@example.com" />
+							<form.Subscribe
+								selector={(state) => state.values.username}
+								children={(username) => (
+									<form.AppField
+										name="email"
+										children={({ TextField }) => (
+											<TextField
+												disabled={username !== ""}
+												label="Email"
+												placeholder="hello@example.com"
+											/>
+										)}
+									/>
 								)}
 							/>
 							<div className="text-center text-sm text-muted-foreground pt-2">
 								(or)
 							</div>
-							<form.AppField
-								name="username"
-								children={({ TextField }) => (
-									<TextField label="Username" placeholder="Username" />
+							<form.Subscribe
+								selector={(state) => state.values.email}
+								children={(email) => (
+									<form.AppField
+										name="username"
+										children={({ TextField }) => (
+											<TextField
+												disabled={email !== ""}
+												label="Username"
+												placeholder="Username"
+											/>
+										)}
+									/>
 								)}
 							/>
 						</div>

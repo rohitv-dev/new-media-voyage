@@ -1,4 +1,5 @@
 import { useFieldContext } from "@/hooks/formContext";
+import { cn } from "@/lib/utils";
 import type { ComponentProps } from "react";
 import { Input } from "../ui/Input";
 import { Label } from "../ui/Label";
@@ -13,7 +14,7 @@ export function TextField({ label, withAsterisk, ...props }: TextFieldProps) {
 
 	return (
 		<div className="grid gap-2">
-			<Label className="gap-1">
+			<Label className={cn(["gap-1", props.disabled && "text-muted"])}>
 				{label}
 				{withAsterisk && (
 					<span className="text-destructive text-center font-bold">*</span>

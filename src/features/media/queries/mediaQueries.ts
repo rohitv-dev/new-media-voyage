@@ -2,6 +2,7 @@ import type { AddMedia } from "@/lib/db/schemas/media";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import {
 	addMedia,
+	fetchFriendMedia,
 	fetchMedia,
 	fetchSingleMedia,
 	updateMedia,
@@ -17,6 +18,15 @@ export const fetchMediaQueryOptions = (uid: string) =>
 	queryOptions({
 		queryKey: ["media"],
 		queryFn: () => fetchMedia({ data: uid }),
+	});
+
+export const fetchFriendMediaQueryOptions = ({
+	uid,
+	friendName,
+}: { uid: string; friendName: string }) =>
+	queryOptions({
+		queryKey: ["media", "friend", friendName],
+		queryFn: () => fetchFriendMedia({ data: { friendName, uid } }),
 	});
 
 export const addMediaMutationOptions = () =>

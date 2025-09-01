@@ -1,7 +1,9 @@
 import { db } from "@/lib/db";
+import { user } from "@/lib/db/schemas/auth";
+import { friendTable } from "@/lib/db/schemas/friend";
 import { type AddMedia, mediaTable } from "@/lib/db/schemas/media";
 import { createServerFn } from "@tanstack/react-start";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq, or } from "drizzle-orm";
 import { addMediaSchema } from "../schemas/mediaSchema";
 
 export const fetchSingleMedia = createServerFn({ method: "GET" })
@@ -34,11 +36,63 @@ export const fetchMedia = createServerFn({ method: "GET" })
 			const media = await db
 				.select()
 				.from(mediaTable)
-				.where(eq(mediaTable.userId, ctx.data));
+				.where(eq(mediaTable.userId, ctx.data))
+				.orderBy(desc(mediaTable.updatedAt));
 			return media;
 		} catch (err) {
 			console.log("Error fetching media: ", err);
 			throw new Error("Failed to fetch media");
+		}
+	});
+
+export const fetchFriendMedia = createServerFn({ method: "GET" })
+	.validator(({ friendName, uid }: { friendName: string; uid: string }) => ({
+		friendName,
+		uid,
+	}))
+	.handler(async (ctx) => {
+		try {
+			const users = await db
+				.select()
+				.from(user)
+				.where(eq(user.name, ctx.data.friendName));
+
+			if (users.length === 0) throw new Error("Cannot find friend");
+
+			const friendId = users[0].id;
+
+			const friends = await db
+				.select()
+				.from(friendTable)
+				.where(
+					and(
+						eq(friendTable.status, "Friends"),
+						or(
+							and(
+								eq(friendTable.senderId, ctx.data.uid),
+								eq(friendTable.receipientId, friendId),
+							),
+							and(
+								eq(friendTable.senderId, friendId),
+								eq(friendTable.receipientId, ctx.data.uid),
+							),
+						),
+					),
+				);
+
+			if (friends.length === 0) throw new Error("Not friends with this user");
+
+			const media = await db
+				.select()
+				.from(mediaTable)
+				.where(
+					and(eq(mediaTable.userId, friendId), eq(mediaTable.isPrivate, false)),
+				);
+
+			return media;
+		} catch (err) {
+			console.log("Error fetching friend's media: ", err);
+			throw new Error("Failed to fetch friend's media");
 		}
 	});
 

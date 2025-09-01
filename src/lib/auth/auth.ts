@@ -27,7 +27,7 @@ const getAuthConfig = serverOnly(() =>
 		session: {
 			cookieCache: {
 				enabled: true,
-				maxAge: 5 * 60, // 5 minutes
+				maxAge: 10 * 60,
 			},
 		},
 

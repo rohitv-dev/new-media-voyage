@@ -164,6 +164,12 @@ function RouteComponent() {
 							children={({ TiptapField }) => <TiptapField label="Comments" />}
 						/>
 					</div>
+					<div className="col-span-2 mx-auto">
+						<form.AppField
+							name="rating"
+							children={({ RatingField }) => <RatingField size={32} />}
+						/>
+					</div>
 					<div className="col-span-2">
 						<form.SubmitButton text="Submit" />
 					</div>

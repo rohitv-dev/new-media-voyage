@@ -3,6 +3,7 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 import * as TanstackQuery from "./integrations/tanstack-query/root-provider";
 
 import { DefaultCatchBoundary } from "./components/DefaultCatchBoundary";
+import { DefaultLoading } from "./components/DefaultLoading";
 import { DefaultNotFound } from "./components/DefaultNotFound";
 import { routeTree } from "./routeTree.gen";
 
@@ -15,6 +16,7 @@ export const createRouter = () => {
 		defaultPreload: "intent",
 		defaultErrorComponent: DefaultCatchBoundary,
 		defaultNotFoundComponent: DefaultNotFound,
+		defaultPendingComponent: DefaultLoading,
 		Wrap: (props: { children: React.ReactNode }) => {
 			return (
 				<TanstackQuery.Provider {...rqContext}>
