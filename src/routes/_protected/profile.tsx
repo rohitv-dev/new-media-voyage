@@ -7,6 +7,14 @@ import {
 	CardTitle,
 } from "@/components/ui/Card";
 import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import { FriendRequestForm } from "@/features/friends/forms/FriendRequestForm";
+import {
 	acceptFriendReqMutOptions,
 	fetchFriendsQueryOptions,
 	rejectFriendReqMutOptions,
@@ -18,7 +26,8 @@ import {
 	useSuspenseQuery,
 } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckIcon, User2Icon, UserIcon, XIcon } from "lucide-react";
+import { CheckIcon, PlusIcon, User2Icon, UserIcon, XIcon } from "lucide-react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_protected/profile")({
 	loader: async ({ context }) => {
@@ -30,6 +39,7 @@ export const Route = createFileRoute("/_protected/profile")({
 });
 
 function RouteComponent() {
+	const [open, setOpen] = useState(false);
 	const { user } = Route.useRouteContext();
 	const queryClient = useQueryClient();
 	const navigate = Route.useNavigate();
@@ -80,8 +90,21 @@ function RouteComponent() {
 			</Card>
 			{friendsList.length > 0 && (
 				<Card className="max-w-sm mx-auto mt-4">
-					<CardHeader>
+					<CardHeader className="flex justify-between items-center">
 						<CardTitle>Friends</CardTitle>
+						<Dialog open={open} onOpenChange={setOpen}>
+							<DialogTrigger>
+								<Button variant="ghost">
+									<PlusIcon />
+								</Button>
+							</DialogTrigger>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>Send Friend Request</DialogTitle>
+								</DialogHeader>
+								<FriendRequestForm />
+							</DialogContent>
+						</Dialog>
 					</CardHeader>
 					<CardContent>
 						{friendsList.map((friend) => {

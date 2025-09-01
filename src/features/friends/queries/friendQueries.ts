@@ -3,7 +3,14 @@ import {
 	acceptFriendRequest,
 	fetchFriends,
 	rejectFriendRequest,
+	sendFriendRequest,
 } from "../services/friendService";
+
+export const sendFriendReqMutOptions = () =>
+	mutationOptions({
+		mutationFn: ({ uid, friendData }: { uid: string; friendData: string }) =>
+			sendFriendRequest({ data: { uid, friendData } }),
+	});
 
 export const fetchFriendsQueryOptions = (uid: string) =>
 	queryOptions({

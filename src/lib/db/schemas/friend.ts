@@ -16,7 +16,7 @@ export const friendTable = pgTable("friend", {
 		.notNull(),
 	status: text()
 		.references(() => friendStatusTable.status)
-		.notNull(),
+		.notNull().default("Pending"),
 	...timestamps,
 });
 

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^9.6.0",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-popover": "^1.1.15",
@@ -74,5 +75,8 @@
     "vitest": "^3.0.5",
     "web-vitals": "^4.2.4"
   },
-  "packageManager": "pnpm@10.6.5+sha256.47c8bca42b4b48534b5b1b28d573c506773937b02f68e52992fbd8269131c5c8"
+  "packageManager": "pnpm@10.6.5+sha256.47c8bca42b4b48534b5b1b28d573c506773937b02f68e52992fbd8269131c5c8",
+  "engines": {
+    "node": "22"
+  }
 }
