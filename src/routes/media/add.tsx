@@ -57,13 +57,13 @@ function RouteComponent() {
 					/>
 				</div>
 				<form
-					className="grid grid-cols-2 gap-x-6 gap-y-4"
+					className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4"
 					onSubmit={(e) => {
 						e.preventDefault();
 						form.handleSubmit();
 					}}
 				>
-					<div className="col-span-2">
+					<div className="col-span-1 md:col-span-2">
 						<form.AppField
 							name="title"
 							children={({ TextField }) => (
@@ -115,7 +115,7 @@ function RouteComponent() {
 						)}
 					/>
 
-					<div className="col-span-2">
+					<div className="col-span-1 md:col-span-2">
 						<form.AppField
 							name="status"
 							listeners={{
@@ -158,19 +158,19 @@ function RouteComponent() {
 							/>
 						)}
 					/>
-					<div className="col-span-2">
+					<div className="col-span-1 md:col-span-2">
 						<form.AppField
 							name="comments"
 							children={({ TiptapField }) => <TiptapField label="Comments" />}
 						/>
 					</div>
-					<div className="col-span-2 mx-auto">
+					<div className="col-span-1 md:col-span-2 mx-auto">
 						<form.AppField
 							name="rating"
 							children={({ RatingField }) => <RatingField size={32} />}
 						/>
 					</div>
-					<div className="col-span-2">
+					<div className="col-span-1 md:col-span-2">
 						<form.SubmitButton text="Submit" />
 					</div>
 				</form>

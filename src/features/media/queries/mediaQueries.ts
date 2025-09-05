@@ -18,6 +18,7 @@ export const fetchMediaQueryOptions = (uid: string) =>
 	queryOptions({
 		queryKey: ["media"],
 		queryFn: () => fetchMedia({ data: uid }),
+		staleTime: Number.POSITIVE_INFINITY,
 	});
 
 export const fetchFriendMediaQueryOptions = ({

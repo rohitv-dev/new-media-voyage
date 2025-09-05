@@ -9,6 +9,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
 import { Rating } from "@/components/ui/Rating";
+import { MediaCard } from "@/features/media/components/MediaCard";
 import type { Media } from "@/lib/db/schemas/media";
 import { formatDate } from "@/utils/functions/dateFunctions";
 import { useNavigate } from "@tanstack/react-router";
@@ -62,7 +63,16 @@ export function MediaTable({ data, hideActions = false }: MediaTableProps) {
 							<DropdownMenuContent align="end">
 								<DropdownMenuLabel>Actions</DropdownMenuLabel>
 								<DropdownMenuSeparator />
-								<DropdownMenuItem>View Media</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={() => {
+										navigate({
+											to: "/media/view/$id",
+											params: { id: String(id) },
+										});
+									}}
+								>
+									View Media
+								</DropdownMenuItem>
 								<DropdownMenuItem
 									onClick={() => {
 										navigate({
@@ -82,5 +92,19 @@ export function MediaTable({ data, hideActions = false }: MediaTableProps) {
 		[columnHelper, navigate, hideActions],
 	);
 
-	return <DataTable columns={columns} data={data} />;
+	return (
+		<>
+			{/* Mobile/Tablet view - Media Cards in list view */}
+			<div className="lg:hidden space-y-2">
+				{data.map((media) => (
+					<MediaCard listView key={media.id} data={media} />
+				))}
+			</div>
+
+			{/* Desktop view - Data Table */}
+			<div className="hidden lg:block">
+				<DataTable columns={columns} data={data} />
+			</div>
+		</>
+	);
 }

@@ -19,6 +19,8 @@ import {
 	fetchFriendsQueryOptions,
 	rejectFriendReqMutOptions,
 } from "@/features/friends/queries/friendQueries";
+import { authClient } from "@/lib/auth/auth-client";
+import { authQueryOptions } from "@/lib/auth/queries";
 import { formatDate } from "@/utils/functions/dateFunctions";
 import {
 	useMutation,
@@ -175,6 +177,22 @@ function RouteComponent() {
 					</CardContent>
 				</Card>
 			)}
+			<div className="flex w-full justify-center mt-8">
+				<Button
+					size="sm"
+					className=""
+					onClick={() => {
+						authClient.signOut().then(() => {
+							queryClient.removeQueries({
+								queryKey: authQueryOptions().queryKey,
+							});
+							navigate({ to: "/login" });
+						});
+					}}
+				>
+					Logout
+				</Button>
+			</div>
 		</div>
 	);
 }

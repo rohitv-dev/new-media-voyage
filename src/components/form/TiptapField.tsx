@@ -50,7 +50,7 @@ export const TiptapField = ({ label }: TiptapFieldProps) => {
 		immediatelyRender: false,
 		editorProps: {
 			attributes: {
-				class: "prose focus:outline-none",
+				class: "prose focus:outline-none dark:prose-invert",
 			},
 		},
 		extensions: [StarterKit, TextAlign],
@@ -153,10 +153,13 @@ export const TiptapField = ({ label }: TiptapFieldProps) => {
 
 			{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
 			<div
-				className="border mt-2 h-40 p-1 cursor-text"
+				className="border mt-2 h-40 p-1 cursor-text dark:border-input"
 				onClick={() => editor.chain().focus().run()}
 			>
-				<EditorContent editor={editor} className="h-full" />
+				<EditorContent 
+					editor={editor} 
+					className="h-full prose dark:prose-invert [&_p]:text-foreground dark:[&_p]:text-foreground" 
+				/>
 			</div>
 		</>
 	);

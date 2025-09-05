@@ -20,6 +20,7 @@ import { Route as MediaAddRouteImport } from './routes/media/add'
 import { Route as ProtectedProfileRouteImport } from './routes/_protected/profile'
 import { Route as authSignupRouteImport } from './routes/(auth)/signup'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as MediaViewIdRouteImport } from './routes/media/view.$id'
 import { Route as MediaUpdateIdRouteImport } from './routes/media/update.$id'
 import { Route as MediaFriendNameMediaRouteImport } from './routes/media/$friendName.media'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
@@ -69,6 +70,11 @@ const authLoginRoute = authLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => authRouteRoute,
 } as any)
+const MediaViewIdRoute = MediaViewIdRouteImport.update({
+  id: '/view/$id',
+  path: '/view/$id',
+  getParentRoute: () => MediaRouteRoute,
+} as any)
 const MediaUpdateIdRoute = MediaUpdateIdRouteImport.update({
   id: '/update/$id',
   path: '/update/$id',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/media/': typeof MediaIndexRoute
   '/media/$friendName/media': typeof MediaFriendNameMediaRoute
   '/media/update/$id': typeof MediaUpdateIdRoute
+  '/media/view/$id': typeof MediaViewIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof authRouteRouteWithChildren
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/media': typeof MediaIndexRoute
   '/media/$friendName/media': typeof MediaFriendNameMediaRoute
   '/media/update/$id': typeof MediaUpdateIdRoute
+  '/media/view/$id': typeof MediaViewIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/media/': typeof MediaIndexRoute
   '/media/$friendName/media': typeof MediaFriendNameMediaRoute
   '/media/update/$id': typeof MediaUpdateIdRoute
+  '/media/view/$id': typeof MediaViewIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/media/'
     | '/media/$friendName/media'
     | '/media/update/$id'
+    | '/media/view/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/media'
     | '/media/$friendName/media'
     | '/media/update/$id'
+    | '/media/view/$id'
   id:
     | '__root__'
     | '/'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/media/'
     | '/media/$friendName/media'
     | '/media/update/$id'
+    | '/media/view/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -250,6 +262,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof authRouteRoute
     }
+    '/media/view/$id': {
+      id: '/media/view/$id'
+      path: '/view/$id'
+      fullPath: '/media/view/$id'
+      preLoaderRoute: typeof MediaViewIdRouteImport
+      parentRoute: typeof MediaRouteRoute
+    }
     '/media/update/$id': {
       id: '/media/update/$id'
       path: '/update/$id'
@@ -309,6 +328,7 @@ interface MediaRouteRouteChildren {
   MediaIndexRoute: typeof MediaIndexRoute
   MediaFriendNameMediaRoute: typeof MediaFriendNameMediaRoute
   MediaUpdateIdRoute: typeof MediaUpdateIdRoute
+  MediaViewIdRoute: typeof MediaViewIdRoute
 }
 
 const MediaRouteRouteChildren: MediaRouteRouteChildren = {
@@ -316,6 +336,7 @@ const MediaRouteRouteChildren: MediaRouteRouteChildren = {
   MediaIndexRoute: MediaIndexRoute,
   MediaFriendNameMediaRoute: MediaFriendNameMediaRoute,
   MediaUpdateIdRoute: MediaUpdateIdRoute,
+  MediaViewIdRoute: MediaViewIdRoute,
 }
 
 const MediaRouteRouteWithChildren = MediaRouteRoute._addFileChildren(

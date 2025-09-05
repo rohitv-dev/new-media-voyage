@@ -60,7 +60,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<body>
 				<ThemeProvider>
 					<Navbar />
-					<div className="container mx-auto px-4 mt-8">{children}</div>
+					<div className="container mx-auto px-2 md:px-4 mt-4 md:mt-8">
+						{children}
+					</div>
 				</ThemeProvider>
 				<TanstackDevtools
 					config={{
