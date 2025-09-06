@@ -1,21 +1,25 @@
+import { authMiddleware } from "@/lib/auth/middleware";
 import { db } from "@/lib/db";
 import { user } from "@/lib/db/schemas/auth";
 import { friendTable } from "@/lib/db/schemas/friend";
 import { type AddMedia, mediaTable } from "@/lib/db/schemas/media";
 import { createServerFn } from "@tanstack/react-start";
-import { and, desc, eq, or } from "drizzle-orm";
+import { and, desc, eq, ilike, or } from "drizzle-orm";
 import { addMediaSchema } from "../schemas/mediaSchema";
 
 export const fetchSingleMedia = createServerFn({ method: "GET" })
-	.validator(({ uid, id }: { uid: string; id: number }) => ({ uid, id }))
+	.middleware([authMiddleware])
+	.validator(({ id }: { id: number }) => ({ id }))
 	.handler(async (ctx) => {
 		try {
+			const { id } = ctx.context.user;
+
 			const media = await db
 				.select()
 				.from(mediaTable)
 				.where(
 					and(
-						eq(mediaTable.userId, ctx.data.uid),
+						eq(mediaTable.userId, id),
 						eq(mediaTable.id, Number(ctx.data.id)),
 					),
 				);
@@ -30,13 +34,15 @@ export const fetchSingleMedia = createServerFn({ method: "GET" })
 	});
 
 export const fetchMedia = createServerFn({ method: "GET" })
-	.validator((uid: string) => uid)
+	.middleware([authMiddleware])
 	.handler(async (ctx) => {
 		try {
+			const { id } = ctx.context.user;
+
 			const media = await db
 				.select()
 				.from(mediaTable)
-				.where(eq(mediaTable.userId, ctx.data))
+				.where(eq(mediaTable.userId, id))
 				.orderBy(desc(mediaTable.updatedAt));
 			return media;
 		} catch (err) {
@@ -45,13 +51,43 @@ export const fetchMedia = createServerFn({ method: "GET" })
 		}
 	});
 
+export const fetchFilteredMedia = createServerFn({ method: "POST" })
+	.middleware([authMiddleware])
+	.validator((obj: { status?: string; type?: string; title?: string }) => obj)
+	.handler(async (ctx) => {
+		try {
+			const { id } = ctx.context.user;
+
+			const { status, title, type } = ctx.data;
+
+			const media = await db
+				.select()
+				.from(mediaTable)
+				.where(
+					and(
+						eq(mediaTable.userId, id),
+						title ? ilike(mediaTable.title, `%${title}%`) : undefined,
+						status ? eq(mediaTable.status, status) : undefined,
+						type ? eq(mediaTable.type, type) : undefined,
+					),
+				);
+
+			return media;
+		} catch (err) {
+			console.log("Error fetching filtered media: ", err);
+			throw new Error("Failed to fetch filtered media");
+		}
+	});
+
 export const fetchFriendMedia = createServerFn({ method: "GET" })
-	.validator(({ friendName, uid }: { friendName: string; uid: string }) => ({
+	.middleware([authMiddleware])
+	.validator(({ friendName }: { friendName: string }) => ({
 		friendName,
-		uid,
 	}))
 	.handler(async (ctx) => {
 		try {
+			const { id } = ctx.context.user;
+
 			const users = await db
 				.select()
 				.from(user)
@@ -69,12 +105,12 @@ export const fetchFriendMedia = createServerFn({ method: "GET" })
 						eq(friendTable.status, "Friends"),
 						or(
 							and(
-								eq(friendTable.senderId, ctx.data.uid),
+								eq(friendTable.senderId, id),
 								eq(friendTable.receipientId, friendId),
 							),
 							and(
 								eq(friendTable.senderId, friendId),
-								eq(friendTable.receipientId, ctx.data.uid),
+								eq(friendTable.receipientId, id),
 							),
 						),
 					),
@@ -97,18 +133,21 @@ export const fetchFriendMedia = createServerFn({ method: "GET" })
 	});
 
 export const addMedia = createServerFn({ method: "POST" })
-	.validator(({ uid, media }: { uid: string; media: AddMedia }) => {
+	.middleware([authMiddleware])
+	.validator(({ media }: { media: AddMedia }) => {
 		const parsedMedia = addMediaSchema.parse(media);
 
-		return { uid, media: parsedMedia };
+		return { media: parsedMedia };
 	})
 	.handler(async (ctx) => {
 		try {
+			const { id } = ctx.context.user;
+
 			const newMedia = await db
 				.insert(mediaTable)
 				.values({
 					...ctx.data.media,
-					userId: ctx.data.uid,
+					userId: id,
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				})
@@ -122,15 +161,18 @@ export const addMedia = createServerFn({ method: "POST" })
 	});
 
 export const updateMedia = createServerFn({ method: "POST" })
+	.middleware([authMiddleware])
 	.validator(
-		({ uid, id, media }: { uid: string; id: number; media: AddMedia }) => {
+		({ id, media }: { id: number; media: AddMedia }) => {
 			const parsedMedia = addMediaSchema.parse(media);
 
-			return { uid, id, media: parsedMedia };
+			return { id, media: parsedMedia };
 		},
 	)
 	.handler(async (ctx) => {
 		try {
+			const { id } = ctx.context.user;
+
 			const updatedMedia = await db
 				.update(mediaTable)
 				.set({
@@ -139,7 +181,7 @@ export const updateMedia = createServerFn({ method: "POST" })
 				})
 				.where(
 					and(
-						eq(mediaTable.userId, ctx.data.uid),
+						eq(mediaTable.userId, id),
 						eq(mediaTable.id, ctx.data.id),
 					),
 				)

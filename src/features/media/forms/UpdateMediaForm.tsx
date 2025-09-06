@@ -40,13 +40,12 @@ export function UpdateMediaForm({ data }: UpdateMediaFormProps) {
 		onSubmit: ({ value }) => {
 			mutation
 				.mutateAsync({
-					uid: value.userId!,
 					id: Number(id),
 					media: value,
 				})
 				.then(() => {
 					queryClient.invalidateQueries({
-						queryKey: fetchMediaQueryOptions(value.userId!).queryKey,
+						queryKey: fetchMediaQueryOptions().queryKey,
 					});
 					navigate({ to: "/media" });
 				});

@@ -8,7 +8,6 @@ export const Route = createFileRoute("/media/$friendName/media")({
 		context.queryClient.ensureQueryData(
 			fetchFriendMediaQueryOptions({
 				friendName: params.friendName,
-				uid: context.user!.id,
 			}),
 		);
 	},
@@ -17,10 +16,9 @@ export const Route = createFileRoute("/media/$friendName/media")({
 
 function RouteComponent() {
 	const { friendName } = Route.useParams();
-	const { user } = Route.useRouteContext();
 
 	const { data } = useSuspenseQuery(
-		fetchFriendMediaQueryOptions({ friendName, uid: user!.id }),
+		fetchFriendMediaQueryOptions({ friendName }),
 	);
 
 	return (

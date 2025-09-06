@@ -7,18 +7,17 @@ export const Route = createFileRoute("/media/update/$id")({
 	ssr: false,
 	loader: ({ context, params }) => {
 		context.queryClient.ensureQueryData(
-			fetchSingleMediaQueryOptions(context.user!.id, Number(params.id)),
+			fetchSingleMediaQueryOptions(Number(params.id)),
 		);
 	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { user } = Route.useRouteContext();
 	const { id } = Route.useParams();
 
 	const { data } = useSuspenseQuery(
-		fetchSingleMediaQueryOptions(user!.id, Number(id)),
+		fetchSingleMediaQueryOptions(Number(id)),
 	);
 
 	return <UpdateMediaForm data={data} />;

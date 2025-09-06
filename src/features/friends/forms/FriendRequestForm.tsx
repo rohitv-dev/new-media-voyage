@@ -2,14 +2,12 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { useMutation } from "@tanstack/react-query";
-import { useRouteContext } from "@tanstack/react-router";
 import { LoaderCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { sendFriendReqMutOptions } from "../queries/friendQueries";
 
 export function FriendRequestForm() {
 	const [text, setText] = useState("");
-	const { user } = useRouteContext({ strict: false });
 	const mutation = useMutation(sendFriendReqMutOptions());
 	const [errorMessage, setErrorMessage] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -24,7 +22,6 @@ export function FriendRequestForm() {
 
 		try {
 			await mutation.mutateAsync({
-				uid: user!.id,
 				friendData: text,
 			});
 		} catch (err) {

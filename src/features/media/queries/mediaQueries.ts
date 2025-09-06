@@ -2,46 +2,60 @@ import type { AddMedia } from "@/lib/db/schemas/media";
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import {
 	addMedia,
+	fetchFilteredMedia,
 	fetchFriendMedia,
 	fetchMedia,
 	fetchSingleMedia,
 	updateMedia,
 } from "../services/mediaService";
 
-export const fetchSingleMediaQueryOptions = (uid: string, id: number) =>
+export const fetchSingleMediaQueryOptions = (id: number) =>
 	queryOptions({
 		queryKey: ["media", id],
-		queryFn: () => fetchSingleMedia({ data: { uid, id } }),
+		queryFn: () => fetchSingleMedia({ data: { id } }),
 	});
 
-export const fetchMediaQueryOptions = (uid: string) =>
+export const fetchMediaQueryOptions = () =>
 	queryOptions({
 		queryKey: ["media"],
-		queryFn: () => fetchMedia({ data: uid }),
+		queryFn: () => fetchMedia(),
+		staleTime: Number.POSITIVE_INFINITY,
+	});
+
+export const fetchFilteredMediaQueryOptions = ({
+	status,
+	type,
+	title,
+}: {
+	status?: string;
+	type?: string;
+	title?: string;
+}) =>
+	queryOptions({
+		queryKey: ["media", { status, type, title }],
+		queryFn: () => fetchFilteredMedia({ data: { status, title, type } }),
 		staleTime: Number.POSITIVE_INFINITY,
 	});
 
 export const fetchFriendMediaQueryOptions = ({
-	uid,
 	friendName,
-}: { uid: string; friendName: string }) =>
+}: { friendName: string }) =>
 	queryOptions({
 		queryKey: ["media", "friend", friendName],
-		queryFn: () => fetchFriendMedia({ data: { friendName, uid } }),
+		queryFn: () => fetchFriendMedia({ data: { friendName } }),
 	});
 
 export const addMediaMutationOptions = () =>
 	mutationOptions({
-		mutationFn: async ({ uid, media }: { uid: string; media: AddMedia }) =>
-			addMedia({ data: { uid, media } }),
+		mutationFn: async ({ media }: { media: AddMedia }) =>
+			addMedia({ data: { media } }),
 	});
 
 export const updateMediaMutationOptions = () =>
 	mutationOptions({
 		mutationFn: async ({
-			uid,
 			id,
 			media,
-		}: { uid: string; id: number; media: AddMedia }) =>
-			updateMedia({ data: { uid, id, media } }),
+		}: { id: number; media: AddMedia }) =>
+			updateMedia({ data: { id, media } }),
 	});

@@ -33,9 +33,7 @@ import { useState } from "react";
 
 export const Route = createFileRoute("/_protected/profile")({
 	loader: async ({ context }) => {
-		context.queryClient.ensureQueryData(
-			fetchFriendsQueryOptions(context.user!.id),
-		);
+		context.queryClient.ensureQueryData(fetchFriendsQueryOptions());
 	},
 	component: RouteComponent,
 });
@@ -46,25 +44,23 @@ function RouteComponent() {
 	const queryClient = useQueryClient();
 	const navigate = Route.useNavigate();
 
-	const { data: friends } = useSuspenseQuery(
-		fetchFriendsQueryOptions(user!.id),
-	);
+	const { data: friends } = useSuspenseQuery(fetchFriendsQueryOptions());
 
 	const acceptMutation = useMutation(acceptFriendReqMutOptions());
 	const rejectMutation = useMutation(rejectFriendReqMutOptions());
 
 	const acceptRequest = (id: number) => {
-		acceptMutation.mutateAsync({ id, uid: user!.id }).then(() => {
+		acceptMutation.mutateAsync({ id }).then(() => {
 			queryClient.invalidateQueries({
-				queryKey: fetchFriendsQueryOptions(user!.id).queryKey,
+				queryKey: fetchFriendsQueryOptions().queryKey,
 			});
 		});
 	};
 
 	const rejectRequest = (id: number) => {
-		rejectMutation.mutateAsync({ id, uid: user!.id }).then(() => {
+		rejectMutation.mutateAsync({ id }).then(() => {
 			queryClient.invalidateQueries({
-				queryKey: fetchFriendsQueryOptions(user!.id).queryKey,
+				queryKey: fetchFriendsQueryOptions().queryKey,
 			});
 		});
 	};
@@ -95,7 +91,7 @@ function RouteComponent() {
 					<CardHeader className="flex justify-between items-center">
 						<CardTitle>Friends</CardTitle>
 						<Dialog open={open} onOpenChange={setOpen}>
-							<DialogTrigger>
+							<DialogTrigger asChild>
 								<Button variant="ghost">
 									<PlusIcon />
 								</Button>

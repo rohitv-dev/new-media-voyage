@@ -8,24 +8,24 @@ import {
 
 export const sendFriendReqMutOptions = () =>
 	mutationOptions({
-		mutationFn: ({ uid, friendData }: { uid: string; friendData: string }) =>
-			sendFriendRequest({ data: { uid, friendData } }),
+		mutationFn: ({ friendData }: { friendData: string }) =>
+			sendFriendRequest({ data: { friendData } }),
 	});
 
-export const fetchFriendsQueryOptions = (uid: string) =>
+export const fetchFriendsQueryOptions = () =>
 	queryOptions({
 		queryKey: ["friends"],
-		queryFn: () => fetchFriends({ data: { uid } }),
+		queryFn: () => fetchFriends(),
 	});
 
 export const acceptFriendReqMutOptions = () =>
 	mutationOptions({
-		mutationFn: ({ id, uid }: { id: number; uid: string }) =>
-			acceptFriendRequest({ data: { id, uid } }),
+		mutationFn: ({ id }: { id: number }) =>
+			acceptFriendRequest({ data: { id } }),
 	});
 
 export const rejectFriendReqMutOptions = () =>
 	mutationOptions({
-		mutationFn: ({ id, uid }: { id: number; uid: string }) =>
-			rejectFriendRequest({ data: { id, uid } }),
+		mutationFn: ({ id }: { id: number }) =>
+			rejectFriendRequest({ data: { id } }),
 	});

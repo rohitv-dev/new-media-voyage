@@ -1,3 +1,4 @@
+import { authMiddleware } from "@/lib/auth/middleware";
 import { db } from "@/lib/db";
 import { user } from "@/lib/db/schemas/auth";
 import { type FriendWithUser, friendTable } from "@/lib/db/schemas/friend";
@@ -6,9 +7,11 @@ import { createServerFn } from "@tanstack/react-start";
 import { and, eq, or } from "drizzle-orm";
 
 export const fetchFriends = createServerFn({ method: "GET" })
-	.validator(({ uid }: { uid: string }) => uid)
+	.middleware([authMiddleware])
 	.handler(async (ctx) => {
 		try {
+			const { id } = ctx.context.user;
+
 			const friends = await db
 				.select({
 					id: friendTable.id,
@@ -32,11 +35,11 @@ export const fetchFriends = createServerFn({ method: "GET" })
 					user,
 					or(
 						and(
-							eq(friendTable.senderId, ctx.data),
+							eq(friendTable.senderId, id),
 							eq(friendTable.receipientId, user.id),
 						),
 						and(
-							eq(friendTable.receipientId, ctx.data),
+							eq(friendTable.receipientId, id),
 							eq(friendTable.senderId, user.id),
 						),
 					),
@@ -50,14 +53,14 @@ export const fetchFriends = createServerFn({ method: "GET" })
 	});
 
 export const sendFriendRequest = createServerFn({ method: "POST" })
-	.validator(({ uid, friendData }: { uid: string; friendData: string }) => ({
-		uid,
+	.middleware([authMiddleware])
+	.validator(({ friendData }: { friendData: string }) => ({
 		friendData,
 	}))
 	.handler(async (ctx) => {
-		console.log(ctx.data);
-
 		try {
+			const { id } = ctx.context.user;
+
 			const users = await db
 				.select()
 				.from(user)
@@ -72,7 +75,7 @@ export const sendFriendRequest = createServerFn({ method: "POST" })
 
 			const friendId = users[0].id;
 
-			if (friendId === ctx.data.uid)
+			if (friendId === id)
 				throw new Error(
 					"You need a minimum of two people to form a friendship -_-",
 				);
@@ -83,12 +86,12 @@ export const sendFriendRequest = createServerFn({ method: "POST" })
 				.where(
 					or(
 						and(
-							eq(friendTable.senderId, ctx.data.uid),
+							eq(friendTable.senderId, id),
 							eq(friendTable.receipientId, friendId),
 						),
 						and(
 							eq(friendTable.senderId, friendId),
-							eq(friendTable.receipientId, ctx.data.uid),
+							eq(friendTable.receipientId, id),
 						),
 					),
 				);
@@ -109,14 +112,14 @@ export const sendFriendRequest = createServerFn({ method: "POST" })
 
 			db.transaction(async (tx) => {
 				await tx.insert(friendTable).values({
-					senderId: ctx.data.uid,
+					senderId: id,
 					receipientId: users[0].id,
 				});
 
 				await tx.insert(notificationTable).values({
 					title: "Friend Request",
 					description: `You have a friend request from ${users[0].name}`,
-					actorId: ctx.data.uid,
+					actorId: id,
 					for: users[0].id,
 					status: "Unread",
 					type: "FriendRequest",
@@ -129,9 +132,12 @@ export const sendFriendRequest = createServerFn({ method: "POST" })
 	});
 
 export const acceptFriendRequest = createServerFn({ method: "POST" })
-	.validator(({ id, uid }: { id: number; uid: string }) => ({ uid, id }))
+	.middleware([authMiddleware])
+	.validator(({ id }: { id: number }) => ({ id }))
 	.handler(async (ctx) => {
 		try {
+			const { id: userId } = ctx.context.user;
+
 			const friends = await db
 				.select()
 				.from(friendTable)
@@ -139,7 +145,7 @@ export const acceptFriendRequest = createServerFn({ method: "POST" })
 					and(
 						eq(friendTable.id, ctx.data.id),
 						eq(friendTable.status, "Pending"),
-						eq(friendTable.receipientId, ctx.data.uid),
+						eq(friendTable.receipientId, userId),
 					),
 				);
 
@@ -159,9 +165,12 @@ export const acceptFriendRequest = createServerFn({ method: "POST" })
 	});
 
 export const rejectFriendRequest = createServerFn({ method: "POST" })
-	.validator(({ id, uid }: { id: number; uid: string }) => ({ uid, id }))
+	.middleware([authMiddleware])
+	.validator(({ id }: { id: number }) => ({ id }))
 	.handler(async (ctx) => {
 		try {
+			const { id: userId } = ctx.context.user;
+
 			const friends = await db
 				.select()
 				.from(friendTable)
@@ -169,7 +178,7 @@ export const rejectFriendRequest = createServerFn({ method: "POST" })
 					and(
 						eq(friendTable.id, ctx.data.id),
 						eq(friendTable.status, "Pending"),
-						eq(friendTable.receipientId, ctx.data.uid),
+						eq(friendTable.receipientId, userId),
 					),
 				);
 

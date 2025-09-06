@@ -15,7 +15,30 @@ export function Navbar() {
 	const { user } = useRouteContext({ strict: false });
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-	if (!user) return null;
+	// Show skeleton when user data is loading
+	if (!user) {
+		return (
+			<nav className="w-full px-4 py-2 border-b shadow-sm">
+				<div className="container mx-auto flex items-center justify-between">
+					<div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+
+					{/* Desktop Navigation */}
+					<div className="hidden md:flex items-center space-x-2">
+						<div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+						<div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+						<div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+						<div className="h-8 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+					</div>
+
+					{/* Mobile Navigation */}
+					<div className="md:hidden flex items-center">
+						<div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+						<div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse ml-2" />
+					</div>
+				</div>
+			</nav>
+		);
+	}
 
 	return (
 		<nav className="w-full px-4 py-2 border-b shadow-sm">

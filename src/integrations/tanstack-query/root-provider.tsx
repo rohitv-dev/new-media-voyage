@@ -8,6 +8,7 @@ export function getContext() {
 			},
 		},
 	});
+
 	return {
 		queryClient,
 	};

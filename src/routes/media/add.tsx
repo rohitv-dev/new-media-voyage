@@ -14,7 +14,6 @@ export const Route = createFileRoute("/media/add")({
 });
 
 function RouteComponent() {
-	const { user } = Route.useRouteContext();
 	const navigate = Route.useNavigate();
 	const queryClient = useQueryClient();
 
@@ -34,12 +33,11 @@ function RouteComponent() {
 		onSubmit: ({ value }) => {
 			mutation
 				.mutateAsync({
-					uid: user!.id,
 					media: value,
 				})
 				.then(() => {
 					queryClient.invalidateQueries({
-						queryKey: fetchMediaQueryOptions(user!.id).queryKey,
+						queryKey: fetchMediaQueryOptions().queryKey,
 					});
 					navigate({ to: "/media" });
 				});

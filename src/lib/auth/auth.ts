@@ -21,7 +21,7 @@ const getAuthConfig = serverOnly(() =>
 		}),
 
 		// https://www.better-auth.com/docs/integrations/tanstack#usage-tips
-		plugins: [reactStartCookies(), username()],
+		plugins: [username(), reactStartCookies()],
 
 		// https://www.better-auth.com/docs/concepts/session-management#session-caching
 		session: {

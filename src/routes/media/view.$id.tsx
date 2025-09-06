@@ -6,18 +6,17 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/media/view/$id")({
 	loader: ({ context, params }) => {
 		context.queryClient.ensureQueryData(
-			fetchSingleMediaQueryOptions(context.user!.id, Number(params.id)),
+			fetchSingleMediaQueryOptions(Number(params.id)),
 		);
 	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { user } = Route.useRouteContext();
 	const { id } = Route.useParams();
 
 	const { data } = useSuspenseQuery(
-		fetchSingleMediaQueryOptions(user!.id, Number(id)),
+		fetchSingleMediaQueryOptions(Number(id)),
 	);
 
 	return <MediaCard data={data} />;
