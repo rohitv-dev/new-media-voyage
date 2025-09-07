@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/Navbar";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_protected")({
@@ -8,5 +9,13 @@ export const Route = createFileRoute("/_protected")({
 });
 
 function RouteComponent() {
-	return <Outlet />;
+	return (
+		<div>
+			<Navbar />
+			<div className="mt-4" />
+			<div className="px-2">
+				<Outlet />
+			</div>
+		</div>
+	);
 }

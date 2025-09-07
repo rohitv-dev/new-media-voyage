@@ -1,3 +1,4 @@
+import { DataColumn } from "@/components/DataColumn";
 import { Button } from "@/components/ui/Button";
 import {
 	Card,
@@ -49,26 +50,6 @@ function getMediaIcon(type: string) {
 	}
 }
 
-const DataColumn = ({
-	title,
-	value,
-	icon,
-}: {
-	title: string;
-	value: string;
-	icon?: React.ReactNode;
-}) => {
-	return (
-		<div className="flex items-start gap-3 p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-			{icon && <div className="mt-0.5 text-primary">{icon}</div>}
-			<div>
-				<div className="text-sm font-medium text-muted-foreground">{title}</div>
-				<div className="font-medium">{value}</div>
-			</div>
-		</div>
-	);
-};
-
 const StatusIcon = ({ status }: { status: string }) => {
 	if (status === "Completed")
 		return <CheckCircleIcon className="h-4 w-4 text-green-500" />;
@@ -88,6 +69,7 @@ export function MediaCard({ data, listView = false }: MediaCardProps) {
 
 	const editor = useEditor({
 		immediatelyRender: false,
+		editable: false,
 		editorProps: {
 			attributes: {
 				class: "prose focus:outline-none dark:prose-invert",
@@ -238,15 +220,14 @@ export function MediaCard({ data, listView = false }: MediaCardProps) {
 					/>
 				</div>
 
-				{data.comments && (
-					<div className="mt-2 p-2 gap-3 bg-muted/30 rounded-xl">
-						<h3 className="font-medium text-sm text-muted-foreground mb-2 flex items-center gap-2">
-							<BookOpenIcon className="h-5 w-5 text-primary" />
-							Comments
-						</h3>
+				<div className="mt-2">
+					<DataColumn
+						title="Comments"
+						icon={<BookOpenIcon className="h-5 w-5" />}
+					>
 						<EditorContent editor={editor} />
-					</div>
-				)}
+					</DataColumn>
+				</div>
 			</CardContent>
 		</Card>
 	);

@@ -68,8 +68,8 @@ export const TiptapField = ({ label }: TiptapFieldProps) => {
 		<>
 			<Label>{label}</Label>
 
-			<div className="flex gap-2 mt-2">
-				<div className="flex">
+			<div className="flex flex-wrap gap-2 mt-2">
+				<div className="flex flex-wrap gap-0">
 					<Icon onClick={() => editor.chain().focus().toggleBold().run()}>
 						<BoldIcon />
 					</Icon>
@@ -80,7 +80,7 @@ export const TiptapField = ({ label }: TiptapFieldProps) => {
 						<UnderlineIcon />
 					</Icon>
 				</div>
-				<div className="flex">
+				<div className="flex flex-wrap gap-0">
 					<Icon
 						onClick={() =>
 							editor.chain().focus().toggleHeading({ level: 1 }).run()
@@ -110,7 +110,7 @@ export const TiptapField = ({ label }: TiptapFieldProps) => {
 						H4
 					</Icon>
 				</div>
-				<div className="flex">
+				<div className="flex flex-wrap gap-0">
 					<Icon onClick={() => editor.chain().focus().toggleBulletList().run()}>
 						<ListTreeIcon />
 					</Icon>
@@ -120,14 +120,14 @@ export const TiptapField = ({ label }: TiptapFieldProps) => {
 						<ListOrderedIcon />
 					</Icon>
 				</div>
-				<div className="flex">
+				<div className="flex flex-wrap gap-0">
 					<Icon
 						onClick={() => editor.chain().focus().setHorizontalRule().run()}
 					>
 						<PenLineIcon />
 					</Icon>
 				</div>
-				<div className="flex">
+				<div className="flex flex-wrap gap-0">
 					<Icon
 						onClick={() => editor.chain().focus().setTextAlign("left").run()}
 					>

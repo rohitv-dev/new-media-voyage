@@ -9,7 +9,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import appCss from "../styles.css?url";
 
-import { Navbar } from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { authQueryOptions } from "@/lib/auth/queries";
 import type { QueryClient } from "@tanstack/react-query";
@@ -55,10 +54,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<ThemeProvider>
-					<Navbar />
-					<div className="container mx-auto px-2 md:px-4 mt-4 md:mt-8">
-						{children}
-					</div>
+					<div className="container mx-auto px-2 md:px-4">{children}</div>
 					<TanStackRouterDevtools initialIsOpen={false} />
 					<ReactQueryDevtools initialIsOpen={false} />
 				</ThemeProvider>

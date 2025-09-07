@@ -99,10 +99,10 @@ export function FilterComponent({
 					placeholder="Search title..."
 					value={title}
 					onChange={(e) => setTitle(e.target.value)}
-					className="w-[180px]"
+					className="w-[180px] h-8"
 				/>
 
-				<Button onClick={applyFilters} className="h-9">
+				<Button onClick={applyFilters} className="h-8">
 					Apply Filters
 				</Button>
 
@@ -110,7 +110,7 @@ export function FilterComponent({
 					<Button
 						onClick={clearFilters}
 						variant="outline"
-						className="h-9 flex items-center gap-2"
+						className="h-8 flex items-center gap-2"
 					>
 						<XIcon className="size-4" />
 						Clear

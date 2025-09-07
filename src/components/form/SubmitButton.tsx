@@ -14,7 +14,7 @@ export function SubmitButton({ text }: { text: string }) {
 					size="lg"
 					disabled={isSubmitting}
 				>
-					{isSubmitting && <LoaderCircle className="animate-spin" />}
+					{isSubmitting && <LoaderCircle className="animate-spin h-5 w-5" />}
 					{text}
 				</Button>
 			)}

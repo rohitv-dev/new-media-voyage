@@ -53,23 +53,23 @@ export function UpdateMediaForm({ data }: UpdateMediaFormProps) {
 	});
 
 	return (
-		<div>
+		<div className="pb-10">
 			<form.AppForm>
 				<div className="flex justify-between items-center">
-					<div className="font-bold text-xl mb-4">Update Media</div>
+					<div className="font-bold text-lg md:text-xl mb-4">Update Media</div>
 					<form.AppField
 						name="isPrivate"
 						children={({ SwitchField }) => <SwitchField label="Private?" />}
 					/>
 				</div>
 				<form
-					className="grid grid-cols-2 gap-x-6 gap-y-4"
+					className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4"
 					onSubmit={(e) => {
 						e.preventDefault();
 						form.handleSubmit();
 					}}
 				>
-					<div className="col-span-2">
+					<div className="col-span-1 md:col-span-2">
 						<form.AppField
 							name="title"
 							children={({ TextField }) => (
@@ -121,7 +121,7 @@ export function UpdateMediaForm({ data }: UpdateMediaFormProps) {
 						)}
 					/>
 
-					<div className="col-span-2">
+					<div className="col-span-1 md:col-span-2">
 						<form.AppField
 							name="status"
 							listeners={{
@@ -164,19 +164,19 @@ export function UpdateMediaForm({ data }: UpdateMediaFormProps) {
 							/>
 						)}
 					/>
-					<div className="col-span-2">
+					<div className="col-span-1 md:col-span-2">
 						<form.AppField
 							name="comments"
 							children={({ TiptapField }) => <TiptapField label="Comments" />}
 						/>
 					</div>
-					<div className="col-span-2 mx-auto">
+					<div className="col-span-1 md:col-span-2 mx-auto">
 						<form.AppField
 							name="rating"
 							children={({ RatingField }) => <RatingField size={32} />}
 						/>
 					</div>
-					<div className="col-span-2">
+					<div className="col-span-1 md:col-span-2">
 						<form.SubmitButton text="Submit" />
 					</div>
 				</form>

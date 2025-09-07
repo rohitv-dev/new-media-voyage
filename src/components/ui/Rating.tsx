@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { StarIcon } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -65,7 +66,7 @@ export function Rating({
 					<div
 						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 						key={i}
-						className="relative cursor-pointer"
+						className={cn(["relative", !readOnly && "cursor-pointer"])}
 					>
 						<StarIcon
 							size={size}

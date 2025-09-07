@@ -56,7 +56,7 @@ export function DatePickerField({ label, withAsterisk }: DatePickerFieldProps) {
 				</PopoverContent>
 			</Popover>
 			{!field.state.meta.isValid && (
-				<span className="text-destructive text-sm">
+				<span className="text-destructive text-sm font-medium">
 					{field.state.meta.errors.map((e) => e.message).join(", ")}
 				</span>
 			)}

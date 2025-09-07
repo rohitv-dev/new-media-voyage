@@ -21,11 +21,13 @@ import {
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	onRowClick?: (data: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
 	columns,
 	data,
+	onRowClick,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -66,7 +68,12 @@ export function DataTable<TData, TValue>({
 						table.getRowModel().rows.map((row) => (
 							<TableRow
 								key={row.id}
+								className="cursor-pointer"
 								data-state={row.getIsSelected() && "selected"}
+								onClick={(e) => {
+									e.stopPropagation();
+									onRowClick?.(row.original);
+								}}
 							>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>
@@ -78,7 +85,13 @@ export function DataTable<TData, TValue>({
 					) : (
 						<TableRow>
 							<TableCell colSpan={columns.length} className="h-24 text-center">
-								No results.
+								<div>
+									<div className="font-medium">No results</div>
+									<div>
+										There's probably no data for the filters applied or just
+										simply no data
+									</div>
+								</div>
 							</TableCell>
 						</TableRow>
 					)}

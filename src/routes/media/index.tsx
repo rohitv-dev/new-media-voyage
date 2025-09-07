@@ -1,9 +1,11 @@
 import { FilterComponent } from "@/components/FilterComponent";
+import { Button } from "@/components/ui/Button";
 import { MediaTable } from "@/features/media/components/MediaTable";
 import { fetchFilteredMediaQueryOptions } from "@/features/media/queries/mediaQueries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { PlusIcon } from "lucide-react";
 import z from "zod";
 
 export const Route = createFileRoute("/media/")({
@@ -29,11 +31,12 @@ export const Route = createFileRoute("/media/")({
 
 function RouteComponent() {
 	const search = Route.useSearch();
+	const navigate = Route.useNavigate();
 
 	const { data } = useSuspenseQuery(fetchFilteredMediaQueryOptions(search));
 
 	return (
-		<div>
+		<div className="pb-10">
 			<div className="flex justify-end mb-4">
 				<FilterComponent
 					statusOptions={[
@@ -54,6 +57,12 @@ function RouteComponent() {
 				/>
 			</div>
 			<MediaTable data={data ?? []} />
+			<Button
+				className="fixed bottom-4 right-8 rounded-full size-12"
+				onClick={() => navigate({ to: "/media/add" })}
+			>
+				<PlusIcon />
+			</Button>
 		</div>
 	);
 }
