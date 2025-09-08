@@ -1,5 +1,6 @@
 import { FilterComponent } from "@/components/FilterComponent";
 import { Button } from "@/components/ui/Button";
+import { ExportMediaButton } from "@/features/media/components/ExportMediaButton";
 import { MediaTable } from "@/features/media/components/MediaTable";
 import { fetchFilteredMediaQueryOptions } from "@/features/media/queries/mediaQueries";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -34,10 +35,9 @@ function RouteComponent() {
 	const navigate = Route.useNavigate();
 
 	const { data } = useSuspenseQuery(fetchFilteredMediaQueryOptions(search));
-
 	return (
 		<div className="pb-10">
-			<div className="flex justify-end mb-4">
+			<div className="flex justify-end mb-4 gap-2">
 				<FilterComponent
 					statusOptions={[
 						{ label: "Completed", value: "Completed" },
@@ -55,6 +55,7 @@ function RouteComponent() {
 						{ label: "Book", value: "Book" },
 					]}
 				/>
+				<ExportMediaButton />
 			</div>
 			<MediaTable data={data ?? []} />
 			<Button

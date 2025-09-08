@@ -3,9 +3,219 @@ import { db } from "@/lib/db";
 import { user } from "@/lib/db/schemas/auth";
 import { friendTable } from "@/lib/db/schemas/friend";
 import { type AddMedia, mediaTable } from "@/lib/db/schemas/media";
+import { formatDate } from "@/utils/functions/dateFunctions";
 import { createServerFn } from "@tanstack/react-start";
-import { and, desc, eq, ilike, or } from "drizzle-orm";
+import { and, desc, eq, ilike, isNotNull, or, sql } from "drizzle-orm";
+import papaparse from "papaparse";
 import { addMediaSchema } from "../schemas/mediaSchema";
+
+export const fetchMediaOverview = createServerFn({ method: "GET" })
+	.middleware([authMiddleware])
+	.handler(async (ctx) => {
+		try {
+			const { id } = ctx.context.user;
+
+			// Get genre counts for pie chart
+			const genreCounts = await db
+				.select({
+					genre: mediaTable.genre,
+					count: sql<number>`count(*)`.mapWith(Number),
+				})
+				.from(mediaTable)
+				.where(and(eq(mediaTable.userId, id), isNotNull(mediaTable.genre)))
+				.groupBy(mediaTable.genre);
+
+			const platformCounts = await db
+				.select({
+					platform: sql<string>`COALESCE(${mediaTable.platform}, 'Unknown')`,
+					count: sql<number>`count(*)`.mapWith(Number),
+				})
+				.from(mediaTable)
+				.where(eq(mediaTable.userId, id))
+				.groupBy(mediaTable.platform);
+
+			// Get status counts
+			const statusCounts = await db
+				.select({
+					status: mediaTable.status,
+					count: sql<number>`count(*)`.mapWith(Number),
+				})
+				.from(mediaTable)
+				.where(eq(mediaTable.userId, id))
+				.groupBy(mediaTable.status);
+
+			// Get type counts
+			const typeCounts = await db
+				.select({
+					type: mediaTable.type,
+					count: sql<number>`count(*)`.mapWith(Number),
+				})
+				.from(mediaTable)
+				.where(eq(mediaTable.userId, id))
+				.groupBy(mediaTable.type);
+
+			const statsByStatus = await db
+				.select({
+					total: sql<number>`count(*)`,
+					completed:
+						sql<number>`count(case when status = 'Completed' then 1 end)`.mapWith(
+							Number,
+						),
+					inProgress:
+						sql<number>`count(case when status = 'In Progress' then 1 end)`.mapWith(
+							Number,
+						),
+					dropped:
+						sql<number>`count(case when status = 'Dropped' then 1 end)`.mapWith(
+							Number,
+						),
+					planned:
+						sql<number>`count(case when status = 'Planned' then 1 end)`.mapWith(
+							Number,
+						),
+				})
+				.from(mediaTable)
+				.where(eq(mediaTable.userId, id));
+
+			const mediaAddedProgressive = await db
+				.select({
+					period:
+						sql<string>`to_char(${mediaTable.createdAt}, 'YYYY-MM')`.mapWith(
+							String,
+						),
+					count: sql<number>`count(*)`.mapWith(Number),
+				})
+				.from(mediaTable)
+				.where(eq(mediaTable.userId, id))
+				.groupBy(sql`to_char(${mediaTable.createdAt}, 'YYYY-MM')`)
+				.orderBy(sql`to_char(${mediaTable.createdAt}, 'YYYY-MM')`);
+
+			const mediaCompletedProgressive = await db
+				.select({
+					period:
+						sql<string>`to_char(${mediaTable.completedDate}, 'YYYY-MM')`.mapWith(
+							String,
+						),
+					count: sql<number>`count(*)`.mapWith(Number),
+				})
+				.from(mediaTable)
+				.where(
+					and(eq(mediaTable.userId, id), isNotNull(mediaTable.completedDate)),
+				)
+				.groupBy(sql`to_char(${mediaTable.completedDate}, 'YYYY-MM')`)
+				.orderBy(sql`to_char(${mediaTable.completedDate}, 'YYYY-MM')`);
+
+			return {
+				genreCounts,
+				platformCounts,
+				statusCounts,
+				typeCounts,
+				statsByStatus: statsByStatus[0],
+				mediaAddedProgressive,
+				mediaCompletedProgressive,
+			};
+		} catch (err) {
+			console.log("Error fetching media overview", err);
+			throw new Error("Failed to fetch media overview");
+		}
+	});
+
+export const fetchStatsByStatus = createServerFn({ method: "GET" })
+	.middleware([authMiddleware])
+	.handler(async (ctx) => {
+		try {
+			const { id } = ctx.context.user;
+
+			const data = await db
+				.select({
+					total: sql<number>`count(*)`,
+					completed: sql<number>`count(case when status = 'Completed' then 1 end)`,
+					inProgress: sql<number>`count(case when status = 'In Progress' then 1 end)`,
+					dropped: sql<number>`count(case when status = 'Dropped' then 1 end)`,
+					planned: sql<number>`count(case when status = 'Planned' then 1 end)`,
+				})
+				.from(mediaTable)
+				.where(eq(mediaTable.userId, id));
+
+			return data[0];
+		} catch (err) {
+			console.log("Error fetching stats by status", err);
+			throw new Error("Failed to status stats");
+		}
+	});
+
+export const fetchMediaProgressiveData = createServerFn({ method: "GET" })
+	.middleware([authMiddleware])
+	.validator(
+		({ granularity }: { granularity?: "day" | "week" | "month" | "year" }) => ({
+			granularity: granularity || "month",
+		}),
+	)
+	.handler(async (ctx) => {
+		try {
+			const { id } = ctx.context.user;
+			const { granularity } = ctx.data;
+
+			// Format the date based on granularity
+			let dateFormat: string;
+			switch (granularity) {
+				case "day":
+					dateFormat = "YYYY-MM-DD";
+					break;
+				case "week":
+					dateFormat = "YYYY-WW";
+					break;
+				case "year":
+					dateFormat = "YYYY";
+					break;
+				case "month":
+					dateFormat = "YYYY";
+					break;
+				default:
+					dateFormat = "YYYY-MM";
+					break;
+			}
+
+			// Get progressive data of when media was added
+			const mediaAddedProgressive = await db
+				.select({
+					period:
+						sql<string>`to_char(${mediaTable.createdAt}, '${dateFormat}')`.mapWith(
+							String,
+						),
+					count: sql<number>`count(*)`.mapWith(Number),
+				})
+				.from(mediaTable)
+				.where(eq(mediaTable.userId, id))
+				.groupBy(sql`to_char(${mediaTable.createdAt}, '${dateFormat}')`)
+				.orderBy(sql`to_char(${mediaTable.createdAt}, '${dateFormat}')`);
+
+			// Get data of when media was completed
+			const mediaCompleted = await db
+				.select({
+					period:
+						sql<string>`to_char(${mediaTable.completedDate}, '${dateFormat}')`.mapWith(
+							String,
+						),
+					count: sql<number>`count(*)`.mapWith(Number),
+				})
+				.from(mediaTable)
+				.where(
+					and(eq(mediaTable.userId, id), isNotNull(mediaTable.completedDate)),
+				)
+				.groupBy(sql`to_char(${mediaTable.completedDate}, '${dateFormat}')`)
+				.orderBy(sql`to_char(${mediaTable.completedDate}, '${dateFormat}')`);
+
+			return {
+				mediaAddedProgressive,
+				mediaCompleted,
+				granularity,
+			};
+		} catch (err) {
+			console.log("Error fetching progressive data", err);
+			throw new Error("Failed to fetch progressive data");
+		}
+	});
 
 export const fetchSingleMedia = createServerFn({ method: "GET" })
 	.middleware([authMiddleware])
@@ -70,7 +280,8 @@ export const fetchFilteredMedia = createServerFn({ method: "POST" })
 						status ? eq(mediaTable.status, status) : undefined,
 						type ? eq(mediaTable.type, type) : undefined,
 					),
-				);
+				)
+				.orderBy(desc(mediaTable.updatedAt));
 
 			return media;
 		} catch (err) {
@@ -162,13 +373,11 @@ export const addMedia = createServerFn({ method: "POST" })
 
 export const updateMedia = createServerFn({ method: "POST" })
 	.middleware([authMiddleware])
-	.validator(
-		({ id, media }: { id: number; media: AddMedia }) => {
-			const parsedMedia = addMediaSchema.parse(media);
+	.validator(({ id, media }: { id: number; media: AddMedia }) => {
+		const parsedMedia = addMediaSchema.parse(media);
 
-			return { id, media: parsedMedia };
-		},
-	)
+		return { id, media: parsedMedia };
+	})
 	.handler(async (ctx) => {
 		try {
 			const { id } = ctx.context.user;
@@ -179,17 +388,54 @@ export const updateMedia = createServerFn({ method: "POST" })
 					...ctx.data.media,
 					updatedAt: new Date(),
 				})
-				.where(
-					and(
-						eq(mediaTable.userId, id),
-						eq(mediaTable.id, ctx.data.id),
-					),
-				)
+				.where(and(eq(mediaTable.userId, id), eq(mediaTable.id, ctx.data.id)))
 				.returning();
 
 			return updatedMedia;
 		} catch (err) {
 			console.log("Error updating media: ", err);
 			throw new Error("Failed to update media");
+		}
+	});
+
+export const exportMediaData = createServerFn({
+	method: "GET",
+	response: "raw",
+})
+	.middleware([authMiddleware])
+	.validator((obj: { status?: string; type?: string; title?: string }) => obj)
+	.handler(async (ctx) => {
+		try {
+			const media = await fetchFilteredMedia({ data: ctx.data });
+
+			const columns = [
+				mediaTable.title.name,
+				mediaTable.status.name,
+				mediaTable.type.name,
+				mediaTable.genre.name,
+				mediaTable.platform.name,
+				mediaTable.startDate.name,
+				mediaTable.completedDate.name,
+				mediaTable.recommended.name,
+				mediaTable.rating.name,
+				mediaTable.comments.name,
+				mediaTable.isPrivate.name,
+				mediaTable.createdAt.name,
+				mediaTable.updatedAt.name,
+			];
+
+			const data = papaparse.unparse(media, {
+				columns,
+			});
+
+			return new Response(data, {
+				headers: {
+					"Content-Type": "text/csv",
+					"Content-Disposition": `attachment; filename="media-${formatDate(new Date())}.csv"`,
+				},
+			});
+		} catch (err) {
+			console.log("Error exporting media: ", err);
+			throw new Error("Failed to export media");
 		}
 	});

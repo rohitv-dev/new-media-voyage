@@ -5,7 +5,7 @@ export const Route = createFileRoute("/")({
 		if (!context.user) {
 			throw redirect({ to: "/login" });
 		}
-		throw redirect({ to: "/media" });
+		throw redirect({ to: "/dashboard" });
 	},
 	component: App,
 });

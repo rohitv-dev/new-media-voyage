@@ -5,9 +5,24 @@ import {
 	fetchFilteredMedia,
 	fetchFriendMedia,
 	fetchMedia,
+	fetchMediaOverview,
 	fetchSingleMedia,
+	fetchStatsByStatus,
 	updateMedia,
 } from "../services/mediaService";
+
+export const statsByStatusQueryOptions = () =>
+	queryOptions({
+		queryKey: ["stats", "status"],
+		queryFn: () => fetchStatsByStatus(),
+	});
+
+export const fetchMediaOverviewQueryOptions = () =>
+	queryOptions({
+		queryKey: ["mediaOverview"],
+		queryFn: () => fetchMediaOverview(),
+		staleTime: Number.POSITIVE_INFINITY,
+	});
 
 export const fetchSingleMediaQueryOptions = (id: number) =>
 	queryOptions({
@@ -53,9 +68,6 @@ export const addMediaMutationOptions = () =>
 
 export const updateMediaMutationOptions = () =>
 	mutationOptions({
-		mutationFn: async ({
-			id,
-			media,
-		}: { id: number; media: AddMedia }) =>
+		mutationFn: async ({ id, media }: { id: number; media: AddMedia }) =>
 			updateMedia({ data: { id, media } }),
 	});

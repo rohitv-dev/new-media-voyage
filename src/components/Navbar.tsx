@@ -59,6 +59,14 @@ export function Navbar() {
 						Home
 					</Button>
 					<Button
+						variant="secondary"
+						onClick={() => {
+							navigate({ to: "/dashboard" });
+						}}
+					>
+						Dashboard
+					</Button>
+					<Button
 						onClick={() => {
 							navigate({ to: "/media/add" });
 						}}
