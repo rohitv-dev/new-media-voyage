@@ -11,6 +11,18 @@ interface PlatformPieChartProps {
 	data: Data[];
 }
 
+const PLATFORM_COLORS: { [key: string]: string } = {
+	netflix: "#E50914",
+	prime: "#1399FF",
+	hotstar: "#01147C",
+	disney: "#01147C",
+	"disney+": "#01147C",
+	"disney+hotstar": "#01147C",
+	youtube: "#FF0000",
+	steam: "#66c0f4",
+	epic: "#6ca0a7",
+};
+
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 export function PlatformBarChart({ data }: PlatformPieChartProps) {
@@ -18,8 +30,8 @@ export function PlatformBarChart({ data }: PlatformPieChartProps) {
 
 	const fillColor = (data: Data, index: number, length: number) => {
 		if (!data.platform) return "#0088FE";
-		if (data.platform?.trim().toLowerCase() === "netflix") return "#E50914";
-		if (data.platform?.trim().toLowerCase() === "prime") return "#1399FF";
+		const name = data.platform.trim().toLowerCase();
+		if (PLATFORM_COLORS[name]) return PLATFORM_COLORS[name];
 		return COLORS[index % length];
 	};
 

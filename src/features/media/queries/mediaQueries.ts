@@ -11,7 +11,7 @@ import {
 
 export const fetchMediaOverviewQueryOptions = () =>
 	queryOptions({
-		queryKey: ["mediaOverview"],
+		queryKey: ["media", "stats"],
 		queryFn: () => fetchMediaOverview(),
 		staleTime: Number.POSITIVE_INFINITY,
 	});

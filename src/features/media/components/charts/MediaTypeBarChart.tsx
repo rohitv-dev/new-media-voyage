@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { type ChartConfig, ChartContainer } from "@/components/ui/Chart";
+import { useNavigate } from "@tanstack/react-router";
 import { Bar, BarChart, Cell, Tooltip, XAxis, YAxis } from "recharts";
 
 interface MediaTypeCountProps {
@@ -12,6 +13,7 @@ interface MediaTypeCountProps {
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 export function MediaTypeBarChart({ data }: MediaTypeCountProps) {
+	const navigate = useNavigate();
 	const chartConfig = {} satisfies ChartConfig;
 
 	const fillColor = (
@@ -63,7 +65,20 @@ export function MediaTypeBarChart({ data }: MediaTypeCountProps) {
 							wrapperStyle={{ fontSize: "12px" }}
 							contentStyle={{ fontSize: "12px" }}
 						/>
-						<Bar dataKey="count" radius={[4, 4, 0, 0]}>
+						<Bar
+							dataKey="count"
+							radius={[4, 4, 0, 0]}
+							onClick={(data) => {
+								const { type } = data;
+
+								navigate({
+									to: "/media",
+									search: {
+										type,
+									},
+								});
+							}}
+						>
 							{data.map((entry, index) => (
 								<Cell
 									key={entry.type}

@@ -15,6 +15,7 @@ export const Route = createFileRoute("/media/")({
 			status: fallback(z.string(), "").default(""),
 			type: fallback(z.string(), "").default(""),
 			title: fallback(z.string(), "").default(""),
+			platform: fallback(z.string(), "").default(""),
 		}),
 	),
 	loaderDeps: ({ search }) => search,

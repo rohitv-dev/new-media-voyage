@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { type ChartConfig, ChartContainer } from "@/components/ui/Chart";
+import { useNavigate } from "@tanstack/react-router";
 import { Bar, BarChart, Tooltip, XAxis, YAxis } from "recharts";
 
 interface MediaCountBarChart {
@@ -13,6 +14,8 @@ interface MediaCountBarChart {
 }
 
 export function MediaCountBarChart({ data }: MediaCountBarChart) {
+	const navigate = useNavigate();
+
 	const chartData = [
 		{
 			name: "Total",
@@ -100,6 +103,21 @@ export function MediaCountBarChart({ data }: MediaCountBarChart) {
 							dataKey="count"
 							fill="var(--color-total)"
 							radius={[4, 4, 0, 0]}
+							onClick={(data) => {
+								const { name } = data;
+
+								if (name === "Total")
+									navigate({
+										to: "/media",
+									});
+								else
+									navigate({
+										to: "/media",
+										search: {
+											status: name,
+										},
+									});
+							}}
 						/>
 					</BarChart>
 				</ChartContainer>

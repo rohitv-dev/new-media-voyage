@@ -24,7 +24,3 @@ export const addMediaSchema = z
 			error: "Completed Date is required when Status is Completed",
 		},
 	);
-
-export const updateMediaSchema = addMediaSchema.extend({
-	id: z.number(),
-});

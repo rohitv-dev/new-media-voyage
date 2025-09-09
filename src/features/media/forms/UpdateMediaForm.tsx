@@ -40,7 +40,7 @@ export function UpdateMediaForm({ data }: UpdateMediaFormProps) {
 					id: Number(id),
 					media: value,
 				});
-				queryClient.invalidateQueries({
+				await queryClient.invalidateQueries({
 					queryKey: ["media"],
 				});
 				navigate({ to: "/media" });
