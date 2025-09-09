@@ -120,104 +120,7 @@ export const fetchMediaOverview = createServerFn({ method: "GET" })
 		}
 	});
 
-export const fetchStatsByStatus = createServerFn({ method: "GET" })
-	.middleware([authMiddleware])
-	.handler(async (ctx) => {
-		try {
-			const { id } = ctx.context.user;
-
-			const data = await db
-				.select({
-					total: sql<number>`count(*)`,
-					completed: sql<number>`count(case when status = 'Completed' then 1 end)`,
-					inProgress: sql<number>`count(case when status = 'In Progress' then 1 end)`,
-					dropped: sql<number>`count(case when status = 'Dropped' then 1 end)`,
-					planned: sql<number>`count(case when status = 'Planned' then 1 end)`,
-				})
-				.from(mediaTable)
-				.where(eq(mediaTable.userId, id));
-
-			return data[0];
-		} catch (err) {
-			console.log("Error fetching stats by status", err);
-			throw new Error("Failed to status stats");
-		}
-	});
-
-export const fetchMediaProgressiveData = createServerFn({ method: "GET" })
-	.middleware([authMiddleware])
-	.validator(
-		({ granularity }: { granularity?: "day" | "week" | "month" | "year" }) => ({
-			granularity: granularity || "month",
-		}),
-	)
-	.handler(async (ctx) => {
-		try {
-			const { id } = ctx.context.user;
-			const { granularity } = ctx.data;
-
-			// Format the date based on granularity
-			let dateFormat: string;
-			switch (granularity) {
-				case "day":
-					dateFormat = "YYYY-MM-DD";
-					break;
-				case "week":
-					dateFormat = "YYYY-WW";
-					break;
-				case "year":
-					dateFormat = "YYYY";
-					break;
-				case "month":
-					dateFormat = "YYYY";
-					break;
-				default:
-					dateFormat = "YYYY-MM";
-					break;
-			}
-
-			// Get progressive data of when media was added
-			const mediaAddedProgressive = await db
-				.select({
-					period:
-						sql<string>`to_char(${mediaTable.createdAt}, '${dateFormat}')`.mapWith(
-							String,
-						),
-					count: sql<number>`count(*)`.mapWith(Number),
-				})
-				.from(mediaTable)
-				.where(eq(mediaTable.userId, id))
-				.groupBy(sql`to_char(${mediaTable.createdAt}, '${dateFormat}')`)
-				.orderBy(sql`to_char(${mediaTable.createdAt}, '${dateFormat}')`);
-
-			// Get data of when media was completed
-			const mediaCompleted = await db
-				.select({
-					period:
-						sql<string>`to_char(${mediaTable.completedDate}, '${dateFormat}')`.mapWith(
-							String,
-						),
-					count: sql<number>`count(*)`.mapWith(Number),
-				})
-				.from(mediaTable)
-				.where(
-					and(eq(mediaTable.userId, id), isNotNull(mediaTable.completedDate)),
-				)
-				.groupBy(sql`to_char(${mediaTable.completedDate}, '${dateFormat}')`)
-				.orderBy(sql`to_char(${mediaTable.completedDate}, '${dateFormat}')`);
-
-			return {
-				mediaAddedProgressive,
-				mediaCompleted,
-				granularity,
-			};
-		} catch (err) {
-			console.log("Error fetching progressive data", err);
-			throw new Error("Failed to fetch progressive data");
-		}
-	});
-
-export const fetchSingleMedia = createServerFn({ method: "GET" })
+export const fetchMediaById = createServerFn({ method: "GET" })
 	.middleware([authMiddleware])
 	.validator(({ id }: { id: number }) => ({ id }))
 	.handler(async (ctx) => {
@@ -240,24 +143,6 @@ export const fetchSingleMedia = createServerFn({ method: "GET" })
 		} catch (err) {
 			console.log("Error fetching single media: ", err);
 			throw new Error("Failed to fetch single media");
-		}
-	});
-
-export const fetchMedia = createServerFn({ method: "GET" })
-	.middleware([authMiddleware])
-	.handler(async (ctx) => {
-		try {
-			const { id } = ctx.context.user;
-
-			const media = await db
-				.select()
-				.from(mediaTable)
-				.where(eq(mediaTable.userId, id))
-				.orderBy(desc(mediaTable.updatedAt));
-			return media;
-		} catch (err) {
-			console.log("Error fetching media: ", err);
-			throw new Error("Failed to fetch media");
 		}
 	});
 

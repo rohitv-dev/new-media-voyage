@@ -1,12 +1,12 @@
 import { MediaCard } from "@/features/media/components/MediaCard";
-import { fetchSingleMediaQueryOptions } from "@/features/media/queries/mediaQueries";
+import { fetchMediaByIdQueryOptions } from "@/features/media/queries/mediaQueries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/media/view/$id")({
 	loader: ({ context, params }) => {
 		context.queryClient.ensureQueryData(
-			fetchSingleMediaQueryOptions(Number(params.id)),
+			fetchMediaByIdQueryOptions(Number(params.id)),
 		);
 	},
 	component: RouteComponent,
@@ -15,9 +15,7 @@ export const Route = createFileRoute("/media/view/$id")({
 function RouteComponent() {
 	const { id } = Route.useParams();
 
-	const { data } = useSuspenseQuery(
-		fetchSingleMediaQueryOptions(Number(id)),
-	);
+	const { data } = useSuspenseQuery(fetchMediaByIdQueryOptions(Number(id)));
 
 	return <MediaCard data={data} />;
 }

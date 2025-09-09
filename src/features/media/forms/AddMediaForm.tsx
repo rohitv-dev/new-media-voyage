@@ -1,35 +1,23 @@
 import { useAppForm } from "@/hooks/form";
-import type { AddMedia, Media } from "@/lib/db/schemas/media";
+import type { AddMedia } from "@/lib/db/schemas/media";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams } from "@tanstack/react-router";
-import { updateMediaMutationOptions } from "../queries/mediaQueries";
+import { useNavigate } from "@tanstack/react-router";
+import { addMediaMutationOptions } from "../queries/mediaQueries";
 import { addMediaSchema } from "../schemas/mediaSchema";
 
-interface UpdateMediaFormProps {
-	data: Media;
-}
-
-export function UpdateMediaForm({ data }: UpdateMediaFormProps) {
-	const { id } = useParams({ from: "/media/update/$id" });
+export function AddMediaForm() {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
-	const mutation = useMutation(updateMediaMutationOptions());
+	const mutation = useMutation(addMediaMutationOptions());
 
 	const form = useAppForm({
 		defaultValues: {
-			title: data.title,
-			status: data.status,
-			type: data.type,
-			isPrivate: data.isPrivate,
-			rating: data.rating,
-			startDate: data.startDate || undefined,
-			completedDate: data.completedDate || undefined,
-			comments: data.comments || undefined,
-			platform: data.platform || undefined,
-			genre: data.genre || undefined,
-			recommended: data.recommended || undefined,
-			userId: data.userId,
+			title: "",
+			status: "Completed",
+			type: "Movie",
+			isPrivate: false,
+			rating: 0,
 		} as AddMedia,
 		validators: {
 			onSubmit: addMediaSchema,
@@ -37,10 +25,9 @@ export function UpdateMediaForm({ data }: UpdateMediaFormProps) {
 		onSubmit: async ({ value }) => {
 			try {
 				await mutation.mutateAsync({
-					id: Number(id),
 					media: value,
 				});
-				queryClient.invalidateQueries({
+				await queryClient.invalidateQueries({
 					queryKey: ["media"],
 				});
 				navigate({ to: "/media" });
@@ -54,7 +41,7 @@ export function UpdateMediaForm({ data }: UpdateMediaFormProps) {
 		<div className="pb-10">
 			<form.AppForm>
 				<div className="flex justify-between items-center">
-					<div className="font-bold text-lg md:text-xl mb-4">Update Media</div>
+					<div className="font-bold text-lg md:text-xl mb-4">Add Media</div>
 					<form.AppField
 						name="isPrivate"
 						children={({ SwitchField }) => <SwitchField label="Private?" />}

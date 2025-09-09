@@ -35,7 +35,7 @@ export function FriendRequestForm() {
 
 	return (
 		<div className="grid">
-			<div className="grid gap-2">
+			<div className="grid gap-4 mt-4">
 				<Label>Email/Username</Label>
 				<Input
 					disabled={loading}

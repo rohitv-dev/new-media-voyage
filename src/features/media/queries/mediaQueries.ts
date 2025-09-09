@@ -4,18 +4,10 @@ import {
 	addMedia,
 	fetchFilteredMedia,
 	fetchFriendMedia,
-	fetchMedia,
+	fetchMediaById,
 	fetchMediaOverview,
-	fetchSingleMedia,
-	fetchStatsByStatus,
 	updateMedia,
 } from "../services/mediaService";
-
-export const statsByStatusQueryOptions = () =>
-	queryOptions({
-		queryKey: ["stats", "status"],
-		queryFn: () => fetchStatsByStatus(),
-	});
 
 export const fetchMediaOverviewQueryOptions = () =>
 	queryOptions({
@@ -24,17 +16,10 @@ export const fetchMediaOverviewQueryOptions = () =>
 		staleTime: Number.POSITIVE_INFINITY,
 	});
 
-export const fetchSingleMediaQueryOptions = (id: number) =>
+export const fetchMediaByIdQueryOptions = (id: number) =>
 	queryOptions({
 		queryKey: ["media", id],
-		queryFn: () => fetchSingleMedia({ data: { id } }),
-	});
-
-export const fetchMediaQueryOptions = () =>
-	queryOptions({
-		queryKey: ["media"],
-		queryFn: () => fetchMedia(),
-		staleTime: Number.POSITIVE_INFINITY,
+		queryFn: () => fetchMediaById({ data: { id } }),
 	});
 
 export const fetchFilteredMediaQueryOptions = ({
