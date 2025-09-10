@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
 import { StarIcon } from "lucide-react";
 import { useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface RatingProps {
 	readOnly?: boolean;
@@ -49,7 +49,8 @@ export function Rating({
 	const displayValue = hoverValue > 0 ? hoverValue : rating;
 
 	return (
-		// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+		// biome-ignore lint/a11y/useKeyWithClickEvents: <Required for rating>
+		// biome-ignore lint/a11y/noStaticElementInteractions: <Required for rating>
 		<div
 			ref={containerRef}
 			className="flex gap-1 p-0 m-0 w-fit"
@@ -64,7 +65,7 @@ export function Rating({
 
 				return (
 					<div
-						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+						// biome-ignore lint/suspicious/noArrayIndexKey: <index key here is fine>
 						key={i}
 						className={cn(["relative", !readOnly && "cursor-pointer"])}
 					>

@@ -1,4 +1,4 @@
-import { useNavigate, useRouteContext } from "@tanstack/react-router";
+import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { HomeIcon, MenuIcon, PlusIcon, UserRoundIcon } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
@@ -43,15 +43,9 @@ export function Navbar() {
 	return (
 		<nav className="w-full px-4 py-2 border-b shadow-sm rounded-bl-xl rounded-br-xl">
 			<div className="container mx-auto flex items-center justify-between">
-				{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-				<span
-					className="text-xl font-bold cursor-pointer"
-					onClick={() => {
-						navigate({ to: "/media" });
-					}}
-				>
+				<Link to="/media" className="text-xl font-bold hover:underline">
 					Media Voyage
-				</span>
+				</Link>
 
 				{/* Desktop Navigation */}
 				<div className="hidden md:flex items-center space-x-2">

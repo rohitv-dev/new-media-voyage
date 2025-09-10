@@ -1,12 +1,12 @@
+import { useNavigate } from "@tanstack/react-router";
+import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import { useMemo } from "react";
 import { DataTable } from "@/components/dataTable/DataTable";
 import { Rating } from "@/components/ui/Rating";
 import { MediaActionsDropdown } from "@/features/media/components/MediaActionsDropdown";
 import { MediaCard } from "@/features/media/components/MediaCard";
 import type { Media } from "@/lib/db/schemas/media";
 import { formatDate } from "@/utils/functions/dateFunctions";
-import { useNavigate } from "@tanstack/react-router";
-import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import { useMemo } from "react";
 
 interface MediaTableProps {
 	data: Media[];
@@ -17,7 +17,7 @@ export function MediaTable({ data, hideActions = false }: MediaTableProps) {
 	const columnHelper = createColumnHelper<Media>();
 	const navigate = useNavigate();
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	// biome-ignore lint/suspicious/noExplicitAny: <any is fine here>
 	const columns: ColumnDef<Media, any>[] = useMemo(
 		() => [
 			columnHelper.accessor("title", { header: "Title" }),

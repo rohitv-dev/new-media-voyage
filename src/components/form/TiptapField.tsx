@@ -1,4 +1,3 @@
-import { useFieldContext } from "@/hooks/formContext";
 import TextAlign from "@tiptap/extension-text-align";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -14,13 +13,17 @@ import {
 	PenLineIcon,
 	UnderlineIcon,
 } from "lucide-react";
+import { useFieldContext } from "@/hooks/formContext";
 import { Button } from "../ui/Button";
 import { Label } from "../ui/Label";
 
 const Icon = ({
 	children,
 	onClick,
-}: { children: React.ReactNode; onClick: () => void }) => (
+}: {
+	children: React.ReactNode;
+	onClick: () => void;
+}) => (
 	<Button
 		type="button"
 		variant="outline"
@@ -151,14 +154,15 @@ export const TiptapField = ({ label }: TiptapFieldProps) => {
 				</div>
 			</div>
 
-			{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+			{/** biome-ignore lint/a11y/noStaticElementInteractions: <ignore for now> */}
+			{/** biome-ignore lint/a11y/useKeyWithClickEvents: <ignore for now> */}
 			<div
 				className="border mt-2 h-40 p-1 cursor-text dark:border-input"
 				onClick={() => editor.chain().focus().run()}
 			>
-				<EditorContent 
-					editor={editor} 
-					className="h-full prose dark:prose-invert [&_p]:text-foreground dark:[&_p]:text-foreground" 
+				<EditorContent
+					editor={editor}
+					className="h-full prose dark:prose-invert [&_p]:text-foreground dark:[&_p]:text-foreground"
 				/>
 			</div>
 		</>

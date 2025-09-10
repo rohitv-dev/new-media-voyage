@@ -1,7 +1,7 @@
-import { useAppForm } from "@/hooks/form";
-import type { AddMedia } from "@/lib/db/schemas/media";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { useAppForm } from "@/hooks/form";
+import type { AddMedia } from "@/lib/db/schemas/media";
 import { addMediaMutationOptions } from "../queries/mediaQueries";
 import { addMediaSchema } from "../schemas/mediaSchema";
 
@@ -58,7 +58,11 @@ export function AddMediaForm() {
 						<form.AppField
 							name="title"
 							children={({ TextField }) => (
-								<TextField withAsterisk label="Title" />
+								<TextField
+									withAsterisk
+									label="Title"
+									placeholder="Enter the title"
+								/>
 							)}
 						/>
 					</div>

@@ -25,7 +25,6 @@ export function DatePicker() {
 				<PopoverTrigger asChild>
 					<Button
 						variant="outline"
-						id="date"
 						className="w-48 justify-between font-normal"
 					>
 						{date ? date.toLocaleDateString() : "Select date"}
