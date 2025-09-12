@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { useAppForm } from "@/hooks/form";
-import { authClient } from "@/lib/auth/auth-client";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { MonitorSmartphoneIcon } from "lucide-react";
 import { useState } from "react";
 import z from "zod/v4";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { useAppForm } from "@/hooks/form";
+import { authClient } from "@/lib/auth/auth-client";
 
 export const Route = createFileRoute("/(auth)/login")({
 	component: LoginForm,
@@ -35,9 +35,9 @@ function LoginForm() {
 		validators: {
 			onSubmit: loginSchema,
 		},
-		onSubmit: ({ value }) => {
+		onSubmit: async ({ value }) => {
 			if (value.email) {
-				authClient.signIn.email(
+				await authClient.signIn.email(
 					{
 						email: value.email,
 						password: value.password,
@@ -51,7 +51,7 @@ function LoginForm() {
 					},
 				);
 			} else if (value.username) {
-				authClient.signIn.username(
+				await authClient.signIn.username(
 					{
 						username: value.username,
 						password: value.password,

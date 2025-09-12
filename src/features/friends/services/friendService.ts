@@ -1,10 +1,11 @@
+import { createServerFn } from "@tanstack/react-start";
+import { and, eq, or } from "drizzle-orm";
+import { archiveNotification } from "@/features/notifications/services/notificationService";
 import { authMiddleware } from "@/lib/auth/middleware";
 import { db } from "@/lib/db";
 import { user } from "@/lib/db/schemas/auth";
 import { type FriendWithUser, friendTable } from "@/lib/db/schemas/friend";
 import { notificationTable } from "@/lib/db/schemas/notification";
-import { createServerFn } from "@tanstack/react-start";
-import { and, eq, or } from "drizzle-orm";
 
 export const fetchFriends = createServerFn({ method: "GET" })
 	.middleware([authMiddleware])
@@ -59,7 +60,7 @@ export const sendFriendRequest = createServerFn({ method: "POST" })
 	}))
 	.handler(async (ctx) => {
 		try {
-			const { id } = ctx.context.user;
+			const { id, name } = ctx.context.user;
 
 			const users = await db
 				.select()
@@ -77,7 +78,7 @@ export const sendFriendRequest = createServerFn({ method: "POST" })
 
 			if (friendId === id)
 				throw new Error(
-					"You need a minimum of two people to form a friendship -_-",
+					"You need a minimum of two people to form a friendship -_- you daft dimbo",
 				);
 
 			const friends = await db
@@ -110,15 +111,16 @@ export const sendFriendRequest = createServerFn({ method: "POST" })
 				throw new Error("Something went wrong");
 			}
 
-			db.transaction(async (tx) => {
+			await db.transaction(async (tx) => {
 				await tx.insert(friendTable).values({
 					senderId: id,
 					receipientId: users[0].id,
+					status: "Pending",
 				});
 
 				await tx.insert(notificationTable).values({
 					title: "Friend Request",
-					description: `You have a friend request from ${users[0].name}`,
+					description: `You have a friend request from ${name}`,
 					actorId: id,
 					for: users[0].id,
 					status: "Unread",
@@ -131,13 +133,17 @@ export const sendFriendRequest = createServerFn({ method: "POST" })
 		}
 	});
 
-export const acceptFriendRequest = createServerFn({ method: "POST" })
+export const updateFriendRequest = createServerFn({ method: "POST" })
 	.middleware([authMiddleware])
-	.validator(({ id }: { id: number }) => ({ id }))
+	.validator(
+		({ id, status }: { id: number; status: "Friends" | "Rejected" }) => ({
+			id,
+			status,
+		}),
+	)
 	.handler(async (ctx) => {
 		try {
 			const { id: userId } = ctx.context.user;
-
 			const friends = await db
 				.select()
 				.from(friendTable)
@@ -151,46 +157,34 @@ export const acceptFriendRequest = createServerFn({ method: "POST" })
 
 			if (friends.length === 0) throw new Error("Invalid Friend Request");
 
-			await db
-				.update(friendTable)
-				.set({
-					status: "Friends",
-					updatedAt: new Date(),
-				})
-				.where(eq(friendTable.id, ctx.data.id));
-		} catch (err) {
-			console.log("Error accepting friend request", err);
-			throw new Error("Failed to accept friend request");
-		}
-	});
+			await db.transaction(async (tx) => {
+				await tx
+					.update(friendTable)
+					.set({
+						status: ctx.data.status,
+						updatedAt: new Date(),
+					})
+					.where(eq(friendTable.id, ctx.data.id));
 
-export const rejectFriendRequest = createServerFn({ method: "POST" })
-	.middleware([authMiddleware])
-	.validator(({ id }: { id: number }) => ({ id }))
-	.handler(async (ctx) => {
-		try {
-			const { id: userId } = ctx.context.user;
+				const notifs = await tx
+					.select()
+					.from(notificationTable)
+					.where(
+						and(
+							eq(notificationTable.type, "FriendRequest"),
+							eq(notificationTable.for, userId),
+							eq(notificationTable.actorId, friends[0].senderId),
+							eq(notificationTable.status, "Unread"),
+						),
+					);
 
-			const friends = await db
-				.select()
-				.from(friendTable)
-				.where(
-					and(
-						eq(friendTable.id, ctx.data.id),
-						eq(friendTable.status, "Pending"),
-						eq(friendTable.receipientId, userId),
-					),
-				);
-
-			if (friends.length === 0) throw new Error("Invalid Friend Request");
-
-			await db
-				.update(friendTable)
-				.set({
-					status: "Rejected",
-					updatedAt: new Date(),
-				})
-				.where(eq(friendTable.id, ctx.data.id));
+				if (notifs.length > 0) {
+					const notifId = notifs[0].id;
+					await archiveNotification({
+						data: { id: notifId, reason: "Friend Request Accepted/Rejected" },
+					});
+				}
+			});
 		} catch (err) {
 			console.log("Error accepting friend request", err);
 			throw new Error("Failed to accept friend request");

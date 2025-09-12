@@ -1,4 +1,4 @@
-import { integer, pgTable, text } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { timestamps } from "../helpers/columns";
 import { user } from "./auth";
 
@@ -18,5 +18,8 @@ export const notificationTable = pgTable("notification", {
 	for: text().references(() => user.id),
 	type: text().references(() => notificationTypeTable.type),
 	status: text().references(() => notificationStatusTable.status),
+	archivedAt: timestamp({ mode: "date" }),
+	archivedBy: text().references(() => user.id),
+	archiveReason: text(),
 	...timestamps,
 });

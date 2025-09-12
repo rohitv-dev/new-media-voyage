@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { HomeIcon, MenuIcon, PlusIcon, UserRoundIcon } from "lucide-react";
 import { useState } from "react";
+import { NotificationSection } from "@/features/notifications/components/NotificationSection";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/Button";
 import {
@@ -68,6 +69,7 @@ export function Navbar() {
 						Add
 					</Button>
 					<ThemeToggle />
+					<NotificationSection />
 					<Button
 						variant="outline"
 						onClick={() => navigate({ to: "/profile" })}
@@ -79,7 +81,10 @@ export function Navbar() {
 
 				{/* Mobile Navigation */}
 				<div className="md:hidden flex items-center">
-					<ThemeToggle />
+					<div className="flex gap-2">
+						<ThemeToggle />
+						<NotificationSection />
+					</div>
 					<DropdownMenu open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
 						<DropdownMenuTrigger asChild>
 							<Button variant="outline" size="icon" className="ml-2">

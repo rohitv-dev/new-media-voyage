@@ -1,4 +1,14 @@
+import { useNavigate } from "@tanstack/react-router";
+import { FilterIcon, XIcon } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/Input";
 import {
 	Select,
@@ -7,16 +17,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/Select";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-import { useNavigate } from "@tanstack/react-router";
-import { FilterIcon, XIcon } from "lucide-react";
-import { useState } from "react";
 import { Label } from "./ui/Label";
 
 interface FilterComponentProps extends React.ComponentProps<"div"> {

@@ -1,9 +1,8 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import {
-	acceptFriendRequest,
 	fetchFriends,
-	rejectFriendRequest,
 	sendFriendRequest,
+	updateFriendRequest,
 } from "../services/friendService";
 
 export const sendFriendReqMutOptions = () =>
@@ -21,11 +20,11 @@ export const fetchFriendsQueryOptions = () =>
 export const acceptFriendReqMutOptions = () =>
 	mutationOptions({
 		mutationFn: ({ id }: { id: number }) =>
-			acceptFriendRequest({ data: { id } }),
+			updateFriendRequest({ data: { id, status: "Friends" } }),
 	});
 
 export const rejectFriendReqMutOptions = () =>
 	mutationOptions({
 		mutationFn: ({ id }: { id: number }) =>
-			rejectFriendRequest({ data: { id } }),
+			updateFriendRequest({ data: { id, status: "Rejected" } }),
 	});
