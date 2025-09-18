@@ -1,10 +1,10 @@
 import { queryOptions } from "@tanstack/react-query";
 import {
+	archiveNotification,
 	fetchReadNotifications,
 	fetchUnreadNotifCount,
 	fetchUnreadNotifications,
 	markNotifAsRead,
-	archiveNotification,
 } from "../services/notificationService";
 
 export const unreadNotifCountQueryOptions = () =>
@@ -33,5 +33,6 @@ export const markNotifAsReadMutationOptions = () => ({
 });
 
 export const archiveNotificationMutationOptions = () => ({
-	mutationFn: (input: { id: number; reason: string }) => archiveNotification({ data: input }),
+	mutationFn: (input: { id: number; reason: string }) =>
+		archiveNotification({ data: input }),
 });

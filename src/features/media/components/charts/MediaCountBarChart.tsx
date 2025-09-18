@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { type ChartConfig, ChartContainer } from "@/components/ui/Chart";
 import { useNavigate } from "@tanstack/react-router";
 import { Bar, BarChart, Tooltip, XAxis, YAxis } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { type ChartConfig, ChartContainer } from "@/components/ui/Chart";
 
 interface MediaCountBarChart {
 	data: {
@@ -78,7 +78,7 @@ export function MediaCountBarChart({ data }: MediaCountBarChart) {
 						data={chartData}
 						layout="vertical"
 						margin={{
-							left: 30,
+							left: 20,
 						}}
 					>
 						<XAxis

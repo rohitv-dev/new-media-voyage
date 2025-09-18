@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { LoaderIcon } from "lucide-react";
+import { LoaderCircleIcon } from "lucide-react";
 import {
 	Card,
 	CardDescription,
@@ -21,7 +21,7 @@ export function ReadNotifications({ open }: ReadNotificationsProps) {
 	if (isLoading)
 		return (
 			<div className="flex gap-2 w-full justify-center">
-				<LoaderIcon className="animate-spin" />
+				<LoaderCircleIcon className="animate-spin" />
 				<div className="font-medium">Loading Read Notifications</div>
 			</div>
 		);

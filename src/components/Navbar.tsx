@@ -1,5 +1,11 @@
 import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
-import { HomeIcon, MenuIcon, PlusIcon, UserRoundIcon } from "lucide-react";
+import {
+	HomeIcon,
+	LayoutDashboardIcon,
+	MenuIcon,
+	PlusIcon,
+	UserRoundIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { NotificationSection } from "@/features/notifications/components/NotificationSection";
 import { ThemeToggle } from "./ThemeToggle";
@@ -99,8 +105,17 @@ export function Navbar() {
 									setMobileMenuOpen(false);
 								}}
 							>
-								<HomeIcon className="mr-2 h-4 w-4" />
+								<HomeIcon className="mr-2 size-4" />
 								Home
+							</DropdownMenuItem>
+							<DropdownMenuItem
+								onClick={() => {
+									navigate({ to: "/dashboard" });
+									setMobileMenuOpen(false);
+								}}
+							>
+								<LayoutDashboardIcon className="mr-2 size-4" />
+								Dashboard
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								onClick={() => {
@@ -108,7 +123,7 @@ export function Navbar() {
 									setMobileMenuOpen(false);
 								}}
 							>
-								<PlusIcon className="mr-2 h-4 w-4" />
+								<PlusIcon className="mr-2 size-4" />
 								Add Media
 							</DropdownMenuItem>
 							<DropdownMenuItem
@@ -117,7 +132,7 @@ export function Navbar() {
 									setMobileMenuOpen(false);
 								}}
 							>
-								<UserRoundIcon className="mr-2 h-4 w-4" />
+								<UserRoundIcon className="mr-2 size-4" />
 								Profile
 							</DropdownMenuItem>
 						</DropdownMenuContent>

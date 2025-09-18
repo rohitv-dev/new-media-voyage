@@ -1,16 +1,27 @@
+import { useMutation } from "@tanstack/react-query";
+import { CheckIcon, LoaderCircleIcon } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
-import { useMutation } from "@tanstack/react-query";
-import { LoaderCircleIcon } from "lucide-react";
-import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { sendFriendReqMutOptions } from "../queries/friendQueries";
 
-export function FriendRequestForm() {
+interface FriendRequestFormProps {
+	onSuccess: () => void;
+}
+
+export function FriendRequestForm({ onSuccess }: FriendRequestFormProps) {
 	const [text, setText] = useState("");
-	const mutation = useMutation(sendFriendReqMutOptions());
 	const [errorMessage, setErrorMessage] = useState("");
 	const [loading, setLoading] = useState(false);
+	const mutation = useMutation(
+		sendFriendReqMutOptions({
+			onSuccess: () => {
+				setTimeout(() => onSuccess(), 2000);
+			},
+		}),
+	);
 
 	const handleSubmit = async () => {
 		if (text === "") {
@@ -49,9 +60,14 @@ export function FriendRequestForm() {
 					</div>
 				)}
 			</div>
-			<Button className="mt-4" onClick={handleSubmit} disabled={loading}>
+			<Button
+				className={cn(["mt-4", mutation.isSuccess && "bg-green-600"])}
+				onClick={handleSubmit}
+				disabled={loading}
+			>
 				{loading && <LoaderCircleIcon className="animate-spin" />}
-				Send Friend Request
+				{mutation.isSuccess && <CheckIcon />}
+				{mutation.isSuccess ? "Friend Request Sent" : "Send Friend Request"}
 			</Button>
 		</div>
 	);

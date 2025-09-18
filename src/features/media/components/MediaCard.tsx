@@ -1,23 +1,10 @@
-import { DataColumn } from "@/components/DataColumn";
-import { Button } from "@/components/ui/Button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/Card";
-import { Rating } from "@/components/ui/Rating";
-import { Badge } from "@/components/ui/badge";
-import type { Media } from "@/lib/db/schemas/media";
-import { formatDate } from "@/utils/functions/dateFunctions";
 import { useNavigate } from "@tanstack/react-router";
 import TextAlign from "@tiptap/extension-text-align";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
-	BookOpenIcon,
 	BookmarkIcon,
+	BookOpenIcon,
 	CalendarIcon,
 	CheckCircleIcon,
 	EyeClosedIcon,
@@ -29,6 +16,19 @@ import {
 	TvIcon,
 	XIcon,
 } from "lucide-react";
+import { DataColumn } from "@/components/DataColumn";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/badge";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/Card";
+import { Rating } from "@/components/ui/Rating";
+import type { Media } from "@/lib/db/schemas/media";
+import { formatDate } from "@/utils/functions/dateFunctions";
 
 interface MediaCardProps {
 	data: Media;
@@ -166,6 +166,17 @@ export function MediaCard({ data, listView = false }: MediaCardProps) {
 							</div>
 						</div>
 					</div>
+					<Button
+						size="sm"
+						onClick={() =>
+							navigate({
+								to: "/media/update/$id",
+								params: { id: String(data.id) },
+							})
+						}
+					>
+						Update
+					</Button>
 				</div>
 			</CardHeader>
 
@@ -220,14 +231,16 @@ export function MediaCard({ data, listView = false }: MediaCardProps) {
 					/>
 				</div>
 
-				<div className="mt-2">
-					<DataColumn
-						title="Comments"
-						icon={<BookOpenIcon className="h-5 w-5" />}
-					>
-						<EditorContent editor={editor} />
-					</DataColumn>
-				</div>
+				{data.comments && (
+					<div className="mt-2">
+						<DataColumn
+							title="Comments"
+							icon={<BookOpenIcon className="h-5 w-5" />}
+						>
+							<EditorContent editor={editor} />
+						</DataColumn>
+					</div>
+				)}
 			</CardContent>
 		</Card>
 	);

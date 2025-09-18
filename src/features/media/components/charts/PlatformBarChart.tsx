@@ -1,6 +1,6 @@
+import { Bar, BarChart, Cell, Tooltip, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { type ChartConfig, ChartContainer } from "@/components/ui/Chart";
-import { Bar, BarChart, Cell, Tooltip, XAxis, YAxis } from "recharts";
 
 type Data = {
 	platform: string | null;
@@ -52,30 +52,26 @@ export function PlatformBarChart({ data }: PlatformPieChartProps) {
 			<CardContent>
 				<ChartContainer config={chartConfig} className="min-h-[200px] w-full">
 					<BarChart
+						layout="vertical"
 						data={processedData}
 						margin={{
-							right: 20,
-							top: 20,
-							bottom: 20,
+							left: 20,
 						}}
 					>
 						<XAxis
-							dataKey="platform"
-							type="category"
-							tickLine={false}
-							tickMargin={10}
-							axisLine={false}
-							tick={{ fontSize: 12 }}
-							interval={0}
-						/>
-						<YAxis
-							allowDecimals={false}
 							type="number"
 							tickLine={false}
 							tickMargin={10}
 							axisLine={false}
-							tick={{ fontSize: 12 }}
 							domain={[0, "dataMax"]}
+						/>
+						<YAxis
+							type="category"
+							dataKey="platform"
+							tickLine={false}
+							tickMargin={10}
+							axisLine={false}
+							interval={0}
 						/>
 						<Tooltip
 							wrapperStyle={{ fontSize: "12px" }}

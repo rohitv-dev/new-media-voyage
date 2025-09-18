@@ -1,17 +1,15 @@
+import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
+	createRootRouteWithContext,
 	HeadContent,
 	Scripts,
-	createRootRouteWithContext,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-import appCss from "../styles.css?url";
-
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { authQueryOptions } from "@/lib/auth/queries";
-import type { QueryClient } from "@tanstack/react-query";
+import appCss from "../styles.css?url";
 
 interface MyRouterContext {
 	queryClient: QueryClient;

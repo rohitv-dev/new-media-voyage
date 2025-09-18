@@ -1,12 +1,12 @@
+import { useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { MonitorSmartphoneIcon } from "lucide-react";
+import { useState } from "react";
+import z from "zod/v4";
 import { Card, CardContent } from "@/components/ui/Card";
 import { useAppForm } from "@/hooks/form";
 import { authClient } from "@/lib/auth/auth-client";
 import { authQueryOptions } from "@/lib/auth/queries";
-import { useQueryClient } from "@tanstack/react-query";
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import { MonitorSmartphoneIcon } from "lucide-react";
-import { useState } from "react";
-import z from "zod/v4";
 
 export const Route = createFileRoute("/(auth)/signup")({
 	component: SignupForm,
@@ -44,8 +44,8 @@ function SignupForm() {
 		validators: {
 			onChange: signUpSchema,
 		},
-		onSubmit: ({ value }) => {
-			authClient.signUp.email(
+		onSubmit: async ({ value }) => {
+			await authClient.signUp.email(
 				{
 					name: value.name,
 					username: value.username,

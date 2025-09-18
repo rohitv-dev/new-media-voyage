@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { BellIcon, CrossIcon, LoaderCircleIcon } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import {
 	Drawer,
@@ -8,16 +9,12 @@ import {
 	DrawerTitle,
 	DrawerTrigger,
 } from "@/components/ui/Drawer";
-import {
-	unreadNotifCountQueryOptions,
-} from "../queries/notificationQueries";
-import { useState } from "react";
-import { UnreadNotifications } from "./UnreadNotifications";
+import { unreadNotifCountQueryOptions } from "../queries/notificationQueries";
 import { ReadNotifications } from "./ReadNotifications";
+import { UnreadNotifications } from "./UnreadNotifications";
 
 export function NotificationSection() {
 	const [open, setOpen] = useState(false);
-
 
 	const {
 		data: unreadNotifCount,
@@ -25,7 +22,6 @@ export function NotificationSection() {
 		isError: isUnreadNotifCountError,
 		error: unreadNotifCountError,
 	} = useQuery(unreadNotifCountQueryOptions());
-
 
 	return (
 		<Drawer open={open} onOpenChange={setOpen}>

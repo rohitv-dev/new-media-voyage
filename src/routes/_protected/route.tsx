@@ -1,5 +1,5 @@
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { Navbar } from "@/components/Navbar";
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_protected")({
 	beforeLoad: ({ context }) => {

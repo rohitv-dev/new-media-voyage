@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { LoaderIcon } from "lucide-react";
+import { LoaderCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import {
 	Card,
@@ -40,7 +40,7 @@ export function UnreadNotifications({ open }: UnreadNotificationsProps) {
 	if (isLoading)
 		return (
 			<div className="flex gap-2 w-full justify-center">
-				<LoaderIcon className="animate-spin" />
+				<LoaderCircleIcon className="animate-spin" />
 				<div className="font-medium">Loading New Notifications</div>
 			</div>
 		);

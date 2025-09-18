@@ -5,10 +5,17 @@ import {
 	updateFriendRequest,
 } from "../services/friendService";
 
-export const sendFriendReqMutOptions = () =>
+export const sendFriendReqMutOptions = ({
+	onSuccess,
+}: {
+	onSuccess: () => void;
+}) =>
 	mutationOptions({
 		mutationFn: ({ friendData }: { friendData: string }) =>
 			sendFriendRequest({ data: { friendData } }),
+		onSuccess: () => {
+			onSuccess?.();
+		},
 	});
 
 export const fetchFriendsQueryOptions = () =>

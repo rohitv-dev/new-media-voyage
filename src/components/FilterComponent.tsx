@@ -42,6 +42,8 @@ export function FilterComponent({
 	const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
 	const applyFilters = () => {
+		setIsMobileFiltersOpen(false);
+
 		navigate({
 			to: "/media",
 			search: {
