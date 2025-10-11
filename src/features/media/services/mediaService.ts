@@ -122,7 +122,7 @@ export const fetchMediaOverview = createServerFn({ method: "GET" })
 
 export const fetchMediaById = createServerFn({ method: "GET" })
 	.middleware([authMiddleware])
-	.validator(({ id }: { id: number }) => ({ id }))
+	.inputValidator(({ id }: { id: number }) => ({ id }))
 	.handler(async (ctx) => {
 		try {
 			const { id } = ctx.context.user;
@@ -148,7 +148,9 @@ export const fetchMediaById = createServerFn({ method: "GET" })
 
 export const fetchFilteredMedia = createServerFn({ method: "POST" })
 	.middleware([authMiddleware])
-	.validator((obj: { status?: string; type?: string; title?: string }) => obj)
+	.inputValidator(
+		(obj: { status?: string; type?: string; title?: string }) => obj,
+	)
 	.handler(async (ctx) => {
 		try {
 			const { id } = ctx.context.user;
@@ -177,7 +179,7 @@ export const fetchFilteredMedia = createServerFn({ method: "POST" })
 
 export const fetchFriendMedia = createServerFn({ method: "GET" })
 	.middleware([authMiddleware])
-	.validator(({ friendName }: { friendName: string }) => ({
+	.inputValidator(({ friendName }: { friendName: string }) => ({
 		friendName,
 	}))
 	.handler(async (ctx) => {
@@ -230,7 +232,7 @@ export const fetchFriendMedia = createServerFn({ method: "GET" })
 
 export const addMedia = createServerFn({ method: "POST" })
 	.middleware([authMiddleware])
-	.validator(({ media }: { media: AddMedia }) => {
+	.inputValidator(({ media }: { media: AddMedia }) => {
 		const parsedMedia = addMediaSchema.parse(media);
 
 		return { media: parsedMedia };
@@ -258,7 +260,7 @@ export const addMedia = createServerFn({ method: "POST" })
 
 export const updateMedia = createServerFn({ method: "POST" })
 	.middleware([authMiddleware])
-	.validator(({ id, media }: { id: number; media: AddMedia }) => {
+	.inputValidator(({ id, media }: { id: number; media: AddMedia }) => {
 		const parsedMedia = addMediaSchema.parse(media);
 
 		return { id, media: parsedMedia };
@@ -285,10 +287,11 @@ export const updateMedia = createServerFn({ method: "POST" })
 
 export const exportMediaData = createServerFn({
 	method: "GET",
-	response: "raw",
 })
 	.middleware([authMiddleware])
-	.validator((obj: { status?: string; type?: string; title?: string }) => obj)
+	.inputValidator(
+		(obj: { status?: string; type?: string; title?: string }) => obj,
+	)
 	.handler(async (ctx) => {
 		try {
 			const media = await fetchFilteredMedia({ data: ctx.data });

@@ -18,27 +18,7 @@ export function PendingFriendRequests({ data }: PendingFriendRequestsProps) {
 	const acceptMutation = useMutation(acceptFriendReqMutOptions());
 	const rejectMutation = useMutation(rejectFriendReqMutOptions());
 
-	if (!data)
-		return (
-			<Card className="min-h-[300px]">
-				<CardContent>
-					<div className="flex justify-center items-center">
-						<LoaderCircleIcon className="animate-spin" />
-					</div>
-				</CardContent>
-			</Card>
-		);
-
-	if (data.length === 0)
-		return (
-			<Card>
-				<CardContent>
-					<div className="text-center text-muted-foreground">
-						No pending friend requests
-					</div>
-				</CardContent>
-			</Card>
-		);
+	if (data.length === 0) return null;
 
 	const acceptRequest = async (id: number) => {
 		await acceptMutation.mutateAsync({ id });

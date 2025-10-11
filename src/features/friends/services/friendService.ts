@@ -55,7 +55,7 @@ export const fetchFriends = createServerFn({ method: "GET" })
 
 export const sendFriendRequest = createServerFn({ method: "POST" })
 	.middleware([authMiddleware])
-	.validator(({ friendData }: { friendData: string }) => ({
+	.inputValidator(({ friendData }: { friendData: string }) => ({
 		friendData,
 	}))
 	.handler(async (ctx) => {
@@ -135,7 +135,7 @@ export const sendFriendRequest = createServerFn({ method: "POST" })
 
 export const updateFriendRequest = createServerFn({ method: "POST" })
 	.middleware([authMiddleware])
-	.validator(
+	.inputValidator(
 		({ id, status }: { id: number; status: "Friends" | "Rejected" }) => ({
 			id,
 			status,

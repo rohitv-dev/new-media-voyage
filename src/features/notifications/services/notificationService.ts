@@ -80,7 +80,7 @@ export const fetchUnreadNotifications = createServerFn({ method: "GET" })
 
 export const markNotifAsRead = createServerFn({ method: "POST" })
 	.middleware([authMiddleware])
-	.validator((id: number) => id)
+	.inputValidator((id: number) => id)
 	.handler(async (ctx) => {
 		try {
 			const { id } = ctx.context.user;
@@ -105,7 +105,7 @@ export const markNotifAsRead = createServerFn({ method: "POST" })
 
 export const archiveNotification = createServerFn({ method: "POST" })
 	.middleware([authMiddleware])
-	.validator((input: { id: number; reason: string }) => input)
+	.inputValidator((input: { id: number; reason: string }) => input)
 	.handler(async (ctx) => {
 		try {
 			const { id } = ctx.context.user;

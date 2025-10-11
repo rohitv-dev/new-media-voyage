@@ -1,5 +1,4 @@
 import {
-	ErrorComponent,
 	type ErrorComponentProps,
 	Link,
 	rootRouteId,
@@ -7,6 +6,13 @@ import {
 	useRouter,
 } from "@tanstack/react-router";
 import { Button } from "./ui/Button";
+import {
+	Card,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "./ui/Card";
 
 export function DefaultCatchBoundary({ error }: Readonly<ErrorComponentProps>) {
 	const router = useRouter();
@@ -18,35 +24,44 @@ export function DefaultCatchBoundary({ error }: Readonly<ErrorComponentProps>) {
 	console.error(error);
 
 	return (
-		<div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-6 p-4">
-			<ErrorComponent error={error} />
-			<div className="flex flex-wrap items-center gap-2">
-				<Button
-					type="button"
-					onClick={() => {
-						router.invalidate();
-					}}
-				>
-					Try Again
-				</Button>
-				{isRoot ? (
-					<Button asChild variant="secondary">
-						<Link to="/">Home</Link>
+		<Card>
+			<CardHeader className="text-center">
+				<CardTitle className="text-xl">
+					<div className="mt-2">Error</div>
+				</CardTitle>
+				<CardDescription className="text-lg text-foreground">
+					{error.message}
+				</CardDescription>
+			</CardHeader>
+			<CardFooter>
+				<div className="flex flex-wrap items-center gap-2 mx-auto mt-4">
+					<Button
+						type="button"
+						onClick={() => {
+							router.invalidate();
+						}}
+					>
+						Try Again
 					</Button>
-				) : (
-					<Button asChild variant="secondary">
-						<Link
-							to="/"
-							onClick={(e) => {
-								e.preventDefault();
-								window.history.back();
-							}}
-						>
-							Go Back
-						</Link>
-					</Button>
-				)}
-			</div>
-		</div>
+					{isRoot ? (
+						<Button asChild variant="secondary">
+							<Link to="/">Home</Link>
+						</Button>
+					) : (
+						<Button asChild variant="secondary">
+							<Link
+								to="/"
+								onClick={(e) => {
+									e.preventDefault();
+									window.history.back();
+								}}
+							>
+								Go Back
+							</Link>
+						</Button>
+					)}
+				</div>
+			</CardFooter>
+		</Card>
 	);
 }

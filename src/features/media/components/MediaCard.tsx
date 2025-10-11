@@ -33,6 +33,7 @@ import { formatDate } from "@/utils/functions/dateFunctions";
 interface MediaCardProps {
 	data: Media;
 	listView?: boolean;
+	hideActions?: boolean;
 }
 
 function getMediaIcon(type: string) {
@@ -64,7 +65,11 @@ const StatusIcon = ({ status }: { status: string }) => {
 		return <BookmarkIcon className="h-4 w-4 text-amber-400" />;
 };
 
-export function MediaCard({ data, listView = false }: MediaCardProps) {
+export function MediaCard({
+	data,
+	hideActions = false,
+	listView = false,
+}: MediaCardProps) {
 	const navigate = useNavigate();
 
 	const editor = useEditor({
@@ -121,18 +126,20 @@ export function MediaCard({ data, listView = false }: MediaCardProps) {
 						>
 							View
 						</Button>
-						<Button
-							size="xs"
-							variant="outline"
-							onClick={() =>
-								navigate({
-									to: "/media/update/$id",
-									params: { id: String(data.id) },
-								})
-							}
-						>
-							Update
-						</Button>
+						{!hideActions && (
+							<Button
+								size="xs"
+								variant="outline"
+								onClick={() =>
+									navigate({
+										to: "/media/update/$id",
+										params: { id: String(data.id) },
+									})
+								}
+							>
+								Update
+							</Button>
+						)}
 					</div>
 				</CardContent>
 			</Card>

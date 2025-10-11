@@ -1,6 +1,6 @@
+import { Area, AreaChart, CartesianGrid, Legend, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { type ChartConfig, ChartContainer } from "@/components/ui/Chart";
-import { Area, AreaChart, CartesianGrid, Legend, XAxis, YAxis } from "recharts";
 
 type Data = {
 	period: string;

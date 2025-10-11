@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { PlusIcon } from "lucide-react";
 import z from "zod";
@@ -56,7 +56,15 @@ function RouteComponent() {
 						{ label: "Book", value: "Book" },
 					]}
 				/>
-				<ExportMediaButton />
+				<ClientOnly
+					fallback={
+						<Button className="h-8" disabled>
+							Loading...
+						</Button>
+					}
+				>
+					<ExportMediaButton />
+				</ClientOnly>
 			</div>
 			<MediaTable data={data ?? []} />
 			<Button

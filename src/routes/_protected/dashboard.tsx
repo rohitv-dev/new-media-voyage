@@ -18,18 +18,16 @@ function RouteComponent() {
 	const { data } = useSuspenseQuery(fetchMediaOverviewQueryOptions());
 
 	return (
-		<div className="container mx-auto md:px-4 pb-6">
-			<ClientOnly fallback={<div>Loading...</div>}>
-				<div className="flex flex-col md:grid md:grid-cols-2 gap-4 mt-4">
-					<MediaCountBarChart data={data.statsByStatus} />
-					<PlatformBarChart data={data.platformCounts} />
-					<MediaProgressAreaChart
-						addedData={data.mediaAddedProgressive}
-						completedData={data.mediaCompletedProgressive}
-					/>
-					<MediaTypeBarChart data={data.typeCounts} />
-				</div>
-			</ClientOnly>
-		</div>
+		<ClientOnly fallback={<div>Loading...</div>}>
+			<div className="flex flex-col md:grid md:grid-cols-2 gap-4 mt-4">
+				<MediaCountBarChart data={data.statsByStatus} />
+				<PlatformBarChart data={data.platformCounts} />
+				<MediaProgressAreaChart
+					addedData={data.mediaAddedProgressive}
+					completedData={data.mediaCompletedProgressive}
+				/>
+				<MediaTypeBarChart data={data.typeCounts} />
+			</div>
+		</ClientOnly>
 	);
 }

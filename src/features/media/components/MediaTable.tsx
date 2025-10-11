@@ -51,7 +51,12 @@ export function MediaTable({ data, hideActions = false }: MediaTableProps) {
 			{/* Mobile/Tablet view - Media Cards in list view */}
 			<div className="lg:hidden space-y-4">
 				{data.map((media) => (
-					<MediaCard listView key={media.id} data={media} />
+					<MediaCard
+						hideActions={hideActions}
+						listView
+						key={media.id}
+						data={media}
+					/>
 				))}
 			</div>
 

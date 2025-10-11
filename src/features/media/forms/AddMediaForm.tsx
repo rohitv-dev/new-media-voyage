@@ -86,7 +86,11 @@ export function AddMediaForm() {
 					<form.AppField
 						name="genre"
 						children={({ TextField }) => (
-							<TextField label="Genre" placeholder="Enter the genre" />
+							<TextField
+								autoComplete="on"
+								label="Genre"
+								placeholder="Enter the genre"
+							/>
 						)}
 					/>
 					<form.AppField
@@ -140,7 +144,11 @@ export function AddMediaForm() {
 					<form.AppField
 						name="platform"
 						children={({ TextField }) => (
-							<TextField label="Platform" placeholder="Enter the platform" />
+							<TextField
+								autoComplete="on"
+								label="Platform"
+								placeholder="Enter the platform"
+							/>
 						)}
 					/>
 					<form.AppField

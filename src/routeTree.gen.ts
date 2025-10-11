@@ -8,8 +8,6 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createServerRootRoute } from '@tanstack/react-start/server'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MediaRouteRouteImport } from './routes/media/route'
 import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
@@ -24,9 +22,7 @@ import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as MediaViewIdRouteImport } from './routes/media/view.$id'
 import { Route as MediaUpdateIdRouteImport } from './routes/media/update.$id'
 import { Route as MediaFriendNameMediaRouteImport } from './routes/media/$friendName.media'
-import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
-
-const rootServerRouteImport = createServerRootRoute()
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const MediaRouteRoute = MediaRouteRouteImport.update({
   id: '/media',
@@ -91,10 +87,10 @@ const MediaFriendNameMediaRoute = MediaFriendNameMediaRouteImport.update({
   path: '/$friendName/media',
   getParentRoute: () => MediaRouteRoute,
 } as any)
-const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
-  getParentRoute: () => rootServerRouteImport,
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -106,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProtectedProfileRoute
   '/media/add': typeof MediaAddRoute
   '/media/': typeof MediaIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/media/$friendName/media': typeof MediaFriendNameMediaRoute
   '/media/update/$id': typeof MediaUpdateIdRoute
   '/media/view/$id': typeof MediaViewIdRoute
@@ -118,6 +115,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProtectedProfileRoute
   '/media/add': typeof MediaAddRoute
   '/media': typeof MediaIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/media/$friendName/media': typeof MediaFriendNameMediaRoute
   '/media/update/$id': typeof MediaUpdateIdRoute
   '/media/view/$id': typeof MediaViewIdRoute
@@ -134,6 +132,7 @@ export interface FileRoutesById {
   '/_protected/profile': typeof ProtectedProfileRoute
   '/media/add': typeof MediaAddRoute
   '/media/': typeof MediaIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/media/$friendName/media': typeof MediaFriendNameMediaRoute
   '/media/update/$id': typeof MediaUpdateIdRoute
   '/media/view/$id': typeof MediaViewIdRoute
@@ -149,6 +148,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/media/add'
     | '/media/'
+    | '/api/auth/$'
     | '/media/$friendName/media'
     | '/media/update/$id'
     | '/media/view/$id'
@@ -161,6 +161,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/media/add'
     | '/media'
+    | '/api/auth/$'
     | '/media/$friendName/media'
     | '/media/update/$id'
     | '/media/view/$id'
@@ -176,6 +177,7 @@ export interface FileRouteTypes {
     | '/_protected/profile'
     | '/media/add'
     | '/media/'
+    | '/api/auth/$'
     | '/media/$friendName/media'
     | '/media/update/$id'
     | '/media/view/$id'
@@ -186,27 +188,7 @@ export interface RootRouteChildren {
   authRouteRoute: typeof authRouteRouteWithChildren
   ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
   MediaRouteRoute: typeof MediaRouteRouteWithChildren
-}
-export interface FileServerRoutesByFullPath {
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesByTo {
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesById {
-  __root__: typeof rootServerRouteImport
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRouteTypes {
-  fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/api/auth/$'
-  fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/api/auth/$'
-  id: '__root__' | '/api/auth/$'
-  fileServerRoutesById: FileServerRoutesById
-}
-export interface RootServerRouteChildren {
-  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -302,16 +284,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MediaFriendNameMediaRouteImport
       parentRoute: typeof MediaRouteRoute
     }
-  }
-}
-declare module '@tanstack/react-start/server' {
-  interface ServerFileRoutesByPath {
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatServerRouteImport
-      parentRoute: typeof rootServerRouteImport
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -369,13 +347,17 @@ const rootRouteChildren: RootRouteChildren = {
   authRouteRoute: authRouteRouteWithChildren,
   ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
   MediaRouteRoute: MediaRouteRouteWithChildren,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-const rootServerRouteChildren: RootServerRouteChildren = {
-  ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
 }
-export const serverRouteTree = rootServerRouteImport
-  ._addFileChildren(rootServerRouteChildren)
-  ._addFileTypes<FileServerRouteTypes>()
