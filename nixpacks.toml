@@ -1,2 +1,5 @@
 [start]
 cmd = "pnpm start"
+
+[env]
+NIXPACKS_NODE_VERSION = "23"
